@@ -1,9 +1,5 @@
 # OSAC gRPC API Reference
 
-**Document Version:** 1.1  
-**Date:** 2026-10-16  
-**OSAC Commit:** `db1faeb588343d0c8ab60ba02bdc28e0b5610adb`
-
 ## Overview
 
 This document provides a comprehensive reference of all gRPC services and RPC methods available in OSAC's Fulfillment API, showing both **Private** and **Public** API endpoints.
@@ -863,9 +859,3 @@ Check enabled service tiers via Capabilities API:
 - **Architecture:** `docs/ARCHITECTURE.md`
 - **Integration Design:** `ai-grid-osac-integration-design.md`
 
----
-
-**Document Version:** 1.1  
-**Last Updated:** 2026-10-16  
-**Maintainer:** OSAC Architecture Team  
-**Related:** This document extracted from `proto/private/osac/private/v1/` proto definitions

@@ -12,7 +12,6 @@ AI Grid MVP is a separate product for AI/ML workload deployment using ACM (Advan
 
 ### 1. osac-grpc-api-reference.md
 
-**Size:** 40K | 871 lines  
 **Purpose:** Complete reference of all OSAC gRPC services
 
 **Contents:**
@@ -39,7 +38,6 @@ AI Grid MVP is a separate product for AI/ML workload deployment using ACM (Advan
 
 ### 2. ai-grid-mvp-rest-api-reference.md
 
-**Size:** 21K | 683 lines  
 **Purpose:** Complete reference of AI Grid MVP REST APIs (PoC)
 
 **Contents:**
@@ -72,7 +70,6 @@ AI Grid MVP is a separate product for AI/ML workload deployment using ACM (Advan
 
 ### 3. ai-grid-mvp-grpc-api-reference.md
 
-**Size:** 35K | 1,425 lines  
 **Purpose:** Production gRPC API design for AI Grid MVP
 
 **Contents:**
@@ -112,7 +109,6 @@ osac/aigrid/v1/
 
 ### 4. ai-grid-osac-integration-design.md
 
-**Size:** 53K | 1,675 lines  
 **Purpose:** Comprehensive gRPC-to-gRPC integration design
 
 **Contents:**

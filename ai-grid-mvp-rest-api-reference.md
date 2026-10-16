@@ -1,9 +1,4 @@
-# AI Grid MVP API Reference
-
-**Document Version:** 1.0  
-**Date:** 2026-10-16  
-**Repository:** `ai-grid-cloud-provider-poc`  
-**Commit:** `043dc940b1b4d102ae86d82e01bff841ec481ad0`
+# AI Grid MVP REST API Reference
 
 ## Overview
 
@@ -675,9 +670,3 @@ Legend:
 - OSAC gRPC API Reference: `osac-grpc-api-reference.md`
 - AI Grid Integration Design: `ai-grid-osac-integration-design.md`
 
----
-
-**Document Version:** 1.0  
-**Last Updated:** 2026-10-16  
-**Maintainer:** AI Grid MVP Team  
-**Note:** PoC uses REST; production will use gRPC following OSAC standards

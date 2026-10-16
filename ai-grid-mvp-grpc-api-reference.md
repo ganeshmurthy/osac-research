@@ -1,8 +1,4 @@
-# AI Grid MVP gRPC API Design
-
-**Document Version:** 1.0  
-**Date:** 2026-10-16  
-**Purpose:** Express AI Grid MVP APIs as gRPC/protobuf following OSAC patterns
+# AI Grid MVP gRPC API Reference
 
 ## Overview
 
@@ -1416,9 +1412,3 @@ AIModels.Create(CreateAIModelRequest)
 - **OSAC gRPC API Reference:** `osac-grpc-api-reference.md`
 - **Integration Design:** `ai-grid-osac-integration-design.md`
 
----
-
-**Document Version:** 1.0  
-**Last Updated:** 2026-10-16  
-**Status:** Design proposal for production gRPC APIs  
-**Next Steps:** Review with API, RHOAI/MaaS, ACM, and UI teams
