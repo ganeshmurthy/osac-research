@@ -37,7 +37,7 @@ AI Grid MVP is a separate product for AI/ML workload deployment using ACM (Advan
 
 ---
 
-### 2. ai-grid-mvp-api-reference.md
+### 2. ai-grid-mvp-rest-api-reference.md
 
 **Size:** 21K | 683 lines  
 **Purpose:** Complete reference of AI Grid MVP REST APIs (PoC)
@@ -66,11 +66,11 @@ AI Grid MVP is a separate product for AI/ML workload deployment using ACM (Advan
 - Clusters API is enrollment-only (not provisioning)
 - Atomic tenant + IdP operations
 
-**Note:** This documents the REST PoC. See `ai-grid-mvp-grpc-api-design.md` for production gRPC design.
+**Note:** This documents the REST PoC. See `ai-grid-mvp-grpc-api-reference.md` for production gRPC design.
 
 ---
 
-### 3. ai-grid-mvp-grpc-api-design.md
+### 3. ai-grid-mvp-grpc-api-reference.md
 
 **Size:** 35K | 1,425 lines  
 **Purpose:** Production gRPC API design for AI Grid MVP
@@ -201,7 +201,7 @@ osac/aigrid/v1/
                              │
                              ▼
               ┌────────────────────────────────┐
-              │ ai-grid-mvp-grpc-api-design.md │
+              │ ai-grid-mvp-grpc-api-reference.md │
               │                                │
               │ • Proto definitions            │
               │ • 5 services in gRPC           │
@@ -248,8 +248,8 @@ osac/aigrid/v1/
 ### Scenario 2: "I need to understand AI Grid MVP capabilities"
 
 **Read in order:**
-1. `ai-grid-mvp-api-reference.md` (understand requirements)
-2. `ai-grid-mvp-grpc-api-design.md` (see gRPC translation)
+1. `ai-grid-mvp-rest-api-reference.md` (understand requirements)
+2. `ai-grid-mvp-grpc-api-reference.md` (see gRPC translation)
 
 **Focus on:**
 - API Summary table (5 resources)
@@ -262,7 +262,7 @@ osac/aigrid/v1/
 
 **Read in order:**
 1. `osac-grpc-api-reference.md` (understand OSAC patterns)
-2. `ai-grid-mvp-grpc-api-design.md` (proto definitions)
+2. `ai-grid-mvp-grpc-api-reference.md` (proto definitions)
 3. `ai-grid-osac-integration-design.md` (integration plan)
 
 **Focus on:**
@@ -289,7 +289,7 @@ osac/aigrid/v1/
 
 ### Scenario 5: "I need proto definitions to start coding"
 
-**Read:** `ai-grid-mvp-grpc-api-design.md`
+**Read:** `ai-grid-mvp-grpc-api-reference.md`
 
 **Copy:**
 - Proto definitions from each service section
@@ -420,7 +420,7 @@ AI Grid MVP adds these capabilities to OSAC:
 
 ### For API Design
 
-1. Review `ai-grid-mvp-grpc-api-design.md` proto definitions
+1. Review `ai-grid-mvp-grpc-api-reference.md` proto definitions
 2. Decide on open questions in `ai-grid-osac-integration-design.md`
 3. Create proto files in OSAC repository
 4. Generate code with `buf generate`

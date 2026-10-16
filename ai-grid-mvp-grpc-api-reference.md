@@ -6,7 +6,7 @@
 
 ## Overview
 
-This document translates the REST/JSON APIs from `ai-grid-mvp-api-reference.md`
+This document translates the REST/JSON APIs from `ai-grid-mvp-rest-api-reference.md`
 into production-ready gRPC service definitions following OSAC's protobuf
 conventions and standards.
 
@@ -1412,7 +1412,7 @@ AIModels.Create(CreateAIModelRequest)
 
 ## Related Documents
 
-- **REST API Reference:** `ai-grid-mvp-api-reference.md`
+- **REST API Reference:** `ai-grid-mvp-rest-api-reference.md`
 - **OSAC gRPC API Reference:** `osac-grpc-api-reference.md`
 - **Integration Design:** `ai-grid-osac-integration-design.md`
 
