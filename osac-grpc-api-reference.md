@@ -861,7 +861,7 @@ Check enabled service tiers via Capabilities API:
 - **API Guidelines:** `fulfillment-service/docs/API.md`
 - **OSAC Standards:** `/home/gmurthy/opensource/ai/osac-service-standards/README.md`
 - **Architecture:** `docs/ARCHITECTURE.md`
-- **Integration Design:** `docs/architecture/ai-grid-api-integration-design.md`
+- **Integration Design:** `ai-grid-osac-integration-design.md`
 
 ---
 

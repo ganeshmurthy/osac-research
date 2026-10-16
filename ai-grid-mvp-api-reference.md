@@ -672,8 +672,8 @@ Legend:
 - **Documentation:** `docs/*.md`
 
 **Related OSAC Documents:**
-- OSAC gRPC API Reference: `docs/architecture/osac-grpc-api-reference.md`
-- AI Grid Integration Design: `docs/architecture/ai-grid-api-integration-design.md`
+- OSAC gRPC API Reference: `osac-grpc-api-reference.md`
+- AI Grid Integration Design: `ai-grid-osac-integration-design.md`
 
 ---
 

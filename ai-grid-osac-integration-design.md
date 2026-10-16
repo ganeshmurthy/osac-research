@@ -1660,7 +1660,6 @@ CREATE INDEX idx_grid_clusters_enabled ON grid_clusters((spec->>'ai_grid_enabled
 - **OSAC gRPC API Reference:** `osac-grpc-api-reference.md`
 - **AI Grid MVP gRPC API Design:** `ai-grid-mvp-grpc-api-design.md`
 - **AI Grid MVP API Reference (REST PoC):** `ai-grid-mvp-api-reference.md`
-- **Gap Analysis:** `ai-grid-api-gap-analysis.md`
 
 ---
 

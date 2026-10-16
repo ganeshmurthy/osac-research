@@ -110,7 +110,7 @@ osac/aigrid/v1/
 
 ---
 
-### 4. ai-grid-api-integration-design.md
+### 4. ai-grid-osac-integration-design.md
 
 **Size:** 53K | 1,675 lines  
 **Purpose:** Comprehensive gRPC-to-gRPC integration design
@@ -216,7 +216,7 @@ osac/aigrid/v1/
                              │
                              ▼
        ┌──────────────────────────────────────────┐
-       │ ai-grid-api-integration-design.md        │
+       │ ai-grid-osac-integration-design.md       │
        │                                          │
        │ • GridClusters: separate service        │
        │ • Tenants: extend with optional IdP     │
@@ -263,7 +263,7 @@ osac/aigrid/v1/
 **Read in order:**
 1. `osac-grpc-api-reference.md` (understand OSAC patterns)
 2. `ai-grid-mvp-grpc-api-design.md` (proto definitions)
-3. `ai-grid-api-integration-design.md` (integration plan)
+3. `ai-grid-osac-integration-design.md` (integration plan)
 
 **Focus on:**
 - Service-by-Service Analysis (integration design)
@@ -275,7 +275,7 @@ osac/aigrid/v1/
 
 ### Scenario 4: "I need to make architecture decisions"
 
-**Read:** `ai-grid-api-integration-design.md`
+**Read:** `ai-grid-osac-integration-design.md`
 
 **Focus on:**
 - Service-by-Service Analysis (options A vs B)
@@ -421,7 +421,7 @@ AI Grid MVP adds these capabilities to OSAC:
 ### For API Design
 
 1. Review `ai-grid-mvp-grpc-api-design.md` proto definitions
-2. Decide on open questions in `ai-grid-api-integration-design.md`
+2. Decide on open questions in `ai-grid-osac-integration-design.md`
 3. Create proto files in OSAC repository
 4. Generate code with `buf generate`
 5. Review generated OpenAPI specs
@@ -444,31 +444,3 @@ AI Grid MVP adds these capabilities to OSAC:
 
 ---
 
-## Document Metadata
-
-| Document | Lines | Last Updated | Status |
-|----------|-------|--------------|--------|
-| osac-grpc-api-reference.md | 871 | 2026-10-16 | Complete |
-| ai-grid-mvp-api-reference.md | 683 | 2026-10-16 | Complete |
-| ai-grid-mvp-grpc-api-design.md | 1,425 | 2026-10-16 | Complete |
-| ai-grid-api-integration-design.md | 1,675 | 2026-10-16 | Complete |
-| **Total** | **4,654** | | |
-
----
-
-## Questions or Feedback
-
-This research was generated through comparative API analysis of:
-- OSAC repository: `/home/gmurthy/opensource/ai/osac` (commit `db1faeb`)
-- AI Grid MVP PoC: `/home/gmurthy/opensource/ai/ai-grid-cloud-provider-poc` (commit `043dc94`)
-
-For questions about:
-- **OSAC APIs:** See OSAC proto files in `proto/private/osac/private/v1/`
-- **AI Grid MVP:** See PoC `docs/openapi.json` and backend implementation
-- **Integration approach:** Review integration design open questions
-
----
-
-**README Version:** 1.0  
-**Generated:** 2026-10-16  
-**Research Folder:** `~/opensource/ai/osac-research/`

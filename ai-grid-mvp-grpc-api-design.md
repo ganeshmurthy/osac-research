@@ -1414,8 +1414,7 @@ AIModels.Create(CreateAIModelRequest)
 
 - **REST API Reference:** `ai-grid-mvp-api-reference.md`
 - **OSAC gRPC API Reference:** `osac-grpc-api-reference.md`
-- **Integration Design:** `ai-grid-api-integration-design.md`
-- **Gap Analysis:** `ai-grid-api-gap-analysis.md`
+- **Integration Design:** `ai-grid-osac-integration-design.md`
 
 ---
 
