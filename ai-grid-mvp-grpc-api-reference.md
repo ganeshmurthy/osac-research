@@ -339,17 +339,14 @@ message ListGridClustersRequest {
 }
 
 message ListGridClustersResponse {
-  // Clusters matching the query
-  repeated GridCluster clusters = 1;
+  // Actual number of items returned
+  int32 size = 1;
 
   // Total count (for pagination)
   int32 total = 2;
 
-  // Offset of this page
-  int32 offset = 3;
-
-  // Number of items in this page
-  int32 limit = 4;
+  // Clusters matching the query
+  repeated GridCluster clusters = 3;
 }
 
 message GetGridClusterRequest {
@@ -601,10 +598,9 @@ message ListTenantsRequest {
 }
 
 message ListTenantsResponse {
-  repeated Tenant tenants = 1;
+  int32 size = 1;
   int32 total = 2;
-  int32 offset = 3;
-  int32 limit = 4;
+  repeated Tenant tenants = 3;
 }
 
 message GetTenantRequest {
@@ -843,10 +839,9 @@ message ListAIModelsRequest {
 }
 
 message ListAIModelsResponse {
-  repeated AIModel models = 1;
+  int32 size = 1;
   int32 total = 2;
-  int32 offset = 3;
-  int32 limit = 4;
+  repeated AIModel models = 3;
 }
 
 message GetAIModelRequest {
@@ -1131,10 +1126,9 @@ message ListAISubscriptionsRequest {
 }
 
 message ListAISubscriptionsResponse {
-  repeated AISubscription subscriptions = 1;
+  int32 size = 1;
   int32 total = 2;
-  int32 offset = 3;
-  int32 limit = 4;
+  repeated AISubscription subscriptions = 3;
 }
 
 message GetAISubscriptionRequest {
