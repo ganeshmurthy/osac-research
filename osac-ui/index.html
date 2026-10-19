@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSAC UI Mockups</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@patternfly/patternfly@5.2.0/patternfly.min.css">
+    <style>
+        body {
+            font-family: RedHatDisplay, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .landing-container {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 40px;
+        }
+        .landing-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .landing-header h1 {
+            font-size: 36px;
+            color: #151515;
+            margin-bottom: 16px;
+        }
+        .landing-header p {
+            font-size: 18px;
+            color: #6a6e73;
+        }
+        .role-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+        .role-card {
+            background: white;
+            border: 1px solid #d2d2d2;
+            border-radius: 8px;
+            padding: 32px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .role-card:hover {
+            border-color: #06c;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .role-card h2 {
+            font-size: 24px;
+            color: #151515;
+            margin: 0 0 12px 0;
+        }
+        .role-card p {
+            color: #6a6e73;
+            margin: 0 0 20px 0;
+            line-height: 1.5;
+        }
+        .role-card .features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .role-card .features li {
+            padding: 6px 0;
+            color: #4f5255;
+            font-size: 14px;
+        }
+        .role-card .features li:before {
+            content: "✓ ";
+            color: #3e8635;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .badge-admin {
+            background: #f0ab00;
+            color: #151515;
+        }
+        .badge-tenant {
+            background: #06c;
+            color: white;
+        }
+        .badge-user {
+            background: #3e8635;
+            color: white;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #d2d2d2;
+            color: #6a6e73;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="landing-container">
+        <div class="landing-header">
+            <h1>🎨 OSAC UI Mockups</h1>
+            <p>Interactive mockups of OSAC Control Panel - Select a role to explore</p>
+        </div>
+
+        <div class="role-cards">
+            <!-- Admin Role -->
+            <a href="admin.html" class="role-card">
+                <span class="badge badge-admin">ADMIN</span>
+                <h2>Platform Administrator</h2>
+                <p>Full system access and configuration capabilities</p>
+                <ul class="features">
+                    <li>Tenant Management</li>
+                    <li>Infrastructure Configuration</li>
+                    <li>Storage Backends & Tiers</li>
+                    <li>Instance Types & Disk Images</li>
+                    <li>External IP Pools</li>
+                    <li>System Catalog</li>
+                </ul>
+            </a>
+
+            <!-- Tenant Admin Role -->
+            <a href="tenant-admin.html" class="role-card">
+                <span class="badge badge-tenant">TENANT ADMIN</span>
+                <h2>Tenant Administrator</h2>
+                <p>Manage tenant resources and users</p>
+                <ul class="features">
+                    <li>Cluster Management</li>
+                    <li>Virtual Machine Management</li>
+                    <li>Bare Metal Services</li>
+                    <li>Storage Volumes</li>
+                    <li>Virtual Networks</li>
+                    <li>Identity Provider Setup</li>
+                    <li>User Role Bindings</li>
+                </ul>
+            </a>
+
+            <!-- Tenant User Role -->
+            <a href="tenant-user.html" class="role-card">
+                <span class="badge badge-user">TENANT USER</span>
+                <h2>Tenant User</h2>
+                <p>Deploy and manage workloads</p>
+                <ul class="features">
+                    <li>Service Catalog</li>
+                    <li>Create Clusters</li>
+                    <li>Deploy VMs</li>
+                    <li>Request Bare Metal</li>
+                    <li>Manage Networks</li>
+                    <li>View Resources</li>
+                </ul>
+            </a>
+
+            <!-- IDP Manager Role -->
+            <a href="idp-manager.html" class="role-card">
+                <span class="badge badge-tenant">IDP MANAGER</span>
+                <h2>Identity Provider Manager</h2>
+                <p>Configure authentication and authorization</p>
+                <ul class="features">
+                    <li>Identity Provider Configuration</li>
+                    <li>Role Bindings</li>
+                    <li>Secret Management</li>
+                </ul>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>Based on OSAC UI - Interactive Mockups for Design Review</p>
+            <p style="margin-top: 8px; font-size: 12px;">PatternFly Design System • Fake Data</p>
+        </div>
+    </div>
+</body>
+</html>

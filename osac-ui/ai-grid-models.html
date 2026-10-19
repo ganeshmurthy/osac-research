@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSAC - AI Grid Models</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@patternfly/patternfly@5.2.0/patternfly.min.css">
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+    <!-- Top Masthead -->
+    <header class="pf-v5-c-masthead">
+        <div class="pf-v5-c-masthead__main">
+            <div class="pf-v5-c-masthead__toggle">
+                <button class="pf-v5-c-button pf-m-plain" type="button" onclick="toggleSidebar()">
+                    <span>☰</span>
+                </button>
+            </div>
+            <a class="pf-v5-c-masthead__brand" href="index.html">
+                <span style="font-weight: 600; font-size: 18px; color: white;">OSAC Control Panel</span>
+            </a>
+        </div>
+        <div class="pf-v5-c-masthead__content">
+            <div class="user-info">
+                <span class="role-badge admin-badge">ADMIN</span>
+                <span class="username">admin@osac.cloud</span>
+                <a href="index.html" class="logout-link">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="pf-v5-c-page">
+        <!-- Sidebar Navigation -->
+        <aside class="pf-v5-c-page__sidebar" id="sidebar">
+            <div class="pf-v5-c-page__sidebar-body">
+                <nav class="pf-v5-c-nav">
+                    <ul class="pf-v5-c-nav__list">
+                        <li class="pf-v5-c-nav__item">
+                            <a href="admin.html" class="pf-v5-c-nav__link">📚 Catalog</a>
+                        </li>
+                        <li class="pf-v5-c-nav__section">
+                            <h2 class="pf-v5-c-nav__section-title">AI Grid</h2>
+                            <ul class="pf-v5-c-nav__list">
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="ai-grid-clusters.html" class="pf-v5-c-nav__link">🖥️ Grid Clusters</a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="ai-grid-models.html" class="pf-v5-c-nav__link pf-m-current">🤖 Models</a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="ai-grid-subscriptions.html" class="pf-v5-c-nav__link">📋 Subscriptions</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="pf-v5-c-nav__item">
+                            <a href="admin.html" class="pf-v5-c-nav__link">← Back to Admin</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="pf-v5-c-page__main">
+            <div class="content-area">
+                <div class="page-header">
+                    <div>
+                        <h1>Model Deployments <span style="background: #c9190b; color: white; font-size: 14px; padding: 4px 12px; border-radius: 4px; font-weight: 600; margin-left: 12px;">AI Grid MVP</span></h1>
+                        <p style="color: #6a6e73; font-size: 16px; margin-top: 8px;">
+                            Add and remove model deployments saved to Git. Models are distributed to enrolled AI Grid clusters via ACM.
+                        </p>
+                    </div>
+                    <button class="pf-v5-c-button pf-m-primary" onclick="location.href='ai-grid-model-wizard.html'">
+                        Deploy Model
+                    </button>
+                </div>
+
+                <!-- Search Toolbar -->
+                <div style="margin: 24px 0; padding: 16px; background: white; border: 1px solid #d2d2d2; border-radius: 4px;">
+                    <input type="text"
+                           id="model-search"
+                           placeholder="Filter by name or location"
+                           style="padding: 8px 12px; border: 1px solid #d2d2d2; border-radius: 4px; width: 300px;"
+                           oninput="filterModels(this.value)">
+                </div>
+
+                <!-- Models Table -->
+                <table class="pf-v5-c-table" id="models-table">
+                    <thead>
+                        <tr>
+                            <th>Model Deployment Name</th>
+                            <th>Model</th>
+                            <th>Tenant</th>
+                            <th>Replica Count</th>
+                            <th>Locations</th>
+                            <th>Last Saved</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-model="llama-3-production">
+                            <td>
+                                <strong>llama-3-production</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">Production LLaMA 3 70B deployment</div>
+                            </td>
+                            <td>meta-llama/llama-3-70b</td>
+                            <td>acme-corp</td>
+                            <td>6</td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="showLocations('llama-3-production')">
+                                    2 locations
+                                </button>
+                            </td>
+                            <td>2026-10-17 14:30 UTC</td>
+                            <td><span class="status-badge" style="background: #06c; color: white;">Saved to Git</span></td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="confirmDelete('llama-3-production')">Delete</button>
+                            </td>
+                        </tr>
+                        <tr id="llama-3-production-details" style="display: none;">
+                            <td colspan="8" style="background: #f0f0f0; padding: 16px;">
+                                <strong>Deployment Locations:</strong>
+                                <ul style="margin: 8px 0; padding-left: 20px;">
+                                    <li>production-ocp-1 (us-east-1) - 3 replicas</li>
+                                    <li>globex-prod-cluster (eu-west-1) - 3 replicas</li>
+                                </ul>
+                            </td>
+                        </tr>
+
+                        <tr data-model="granite-code-assistant">
+                            <td>
+                                <strong>granite-code-assistant</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">Code completion and generation assistant</div>
+                            </td>
+                            <td>ibm/granite-code-34b</td>
+                            <td>globex-inc</td>
+                            <td>4</td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="showLocations('granite-code-assistant')">
+                                    2 locations
+                                </button>
+                            </td>
+                            <td>2026-10-16 09:15 UTC</td>
+                            <td><span class="status-badge" style="background: #06c; color: white;">Saved to Git</span></td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="confirmDelete('granite-code-assistant')">Delete</button>
+                            </td>
+                        </tr>
+                        <tr id="granite-code-assistant-details" style="display: none;">
+                            <td colspan="8" style="background: #f0f0f0; padding: 16px;">
+                                <strong>Deployment Locations:</strong>
+                                <ul style="margin: 8px 0; padding-left: 20px;">
+                                    <li>globex-prod-cluster (eu-west-1) - 2 replicas</li>
+                                    <li>globex-analytics (eu-central-1) - 2 replicas</li>
+                                </ul>
+                            </td>
+                        </tr>
+
+                        <tr data-model="mistral-7b-dev">
+                            <td>
+                                <strong>mistral-7b-dev</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">Development testing deployment</div>
+                            </td>
+                            <td>mistralai/mistral-7b-instruct</td>
+                            <td>acme-corp</td>
+                            <td>2</td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="showLocations('mistral-7b-dev')">
+                                    1 location
+                                </button>
+                            </td>
+                            <td>2026-10-17 11:00 UTC</td>
+                            <td><span class="status-badge status-active">Saved</span></td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="confirmDelete('mistral-7b-dev')">Delete</button>
+                            </td>
+                        </tr>
+                        <tr id="mistral-7b-dev-details" style="display: none;">
+                            <td colspan="8" style="background: #f0f0f0; padding: 16px;">
+                                <strong>Deployment Locations:</strong>
+                                <ul style="margin: 8px 0; padding-left: 20px;">
+                                    <li>dev-ocp-1 (us-east-1) - 2 replicas</li>
+                                </ul>
+                            </td>
+                        </tr>
+
+                        <tr data-model="whisper-transcription">
+                            <td>
+                                <strong>whisper-transcription</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">Audio transcription service</div>
+                            </td>
+                            <td>openai/whisper-large-v3</td>
+                            <td>waynetech</td>
+                            <td>3</td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="showLocations('whisper-transcription')">
+                                    1 location
+                                </button>
+                            </td>
+                            <td>2026-10-15 16:45 UTC</td>
+                            <td><span class="status-badge" style="background: #8b8d8f; color: white;">Registered</span></td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="confirmDelete('whisper-transcription')">Delete</button>
+                            </td>
+                        </tr>
+                        <tr id="whisper-transcription-details" style="display: none;">
+                            <td colspan="8" style="background: #f0f0f0; padding: 16px;">
+                                <strong>Deployment Locations:</strong>
+                                <ul style="margin: 8px 0; padding-left: 20px;">
+                                    <li>wayne-ocp-prod (us-east-2) - 3 replicas</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Empty state (hidden when we have data) -->
+                <div id="empty-state" style="display: none;">
+                    <div class="empty-state">
+                        <h2>No models</h2>
+                        <p>Add a deployment to configure a model for serving.</p>
+                        <button class="pf-v5-c-button pf-m-primary" onclick="location.href='ai-grid-model-wizard.html'">
+                            Deploy Model
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Help Info -->
+                <div style="margin-top: 32px; padding: 16px; background: #e7f1fa; border-radius: 8px; border-left: 4px solid #06c;">
+                    <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">ℹ️ Model Deployment Status</div>
+                    <div style="font-size: 14px; color: #151515; line-height: 1.5;">
+                        <strong>Saved to Git:</strong> Model configuration is committed to GitOps repository and being distributed by ACM.<br>
+                        <strong>Saved:</strong> Model deployment is saved locally but not yet in Git.<br>
+                        <strong>Registered:</strong> Model is registered but deployment configuration is pending.
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="common.js"></script>
+    <script>
+        function showLocations(modelId) {
+            const detailsRow = document.getElementById(modelId + '-details');
+            if (detailsRow.style.display === 'none') {
+                detailsRow.style.display = '';
+                event.target.textContent = event.target.textContent.replace('locations', 'locations ▼');
+            } else {
+                detailsRow.style.display = 'none';
+                event.target.textContent = event.target.textContent.replace(' ▼', '');
+            }
+        }
+
+        function confirmDelete(modelName) {
+            if (confirm(`Delete model deployment "${modelName}"?\n\nThis will remove the deployment configuration, location placements, and GitOps manifests.\n\nRemove references from subscriptions and authorization policies first.`)) {
+                const row = event.target.closest('tr');
+                const detailsRow = document.getElementById(modelName + '-details');
+
+                row.style.opacity = '0.5';
+                event.target.textContent = 'Deleting...';
+                event.target.disabled = true;
+
+                setTimeout(() => {
+                    row.remove();
+                    if (detailsRow) detailsRow.remove();
+                    alert(`✓ Model deployment "${modelName}" deleted successfully.`);
+                }, 1000);
+            }
+        }
+
+        function filterModels(searchTerm) {
+            const rows = document.querySelectorAll('#models-table tbody tr[data-model]');
+            const term = searchTerm.toLowerCase();
+
+            rows.forEach(row => {
+                const modelName = row.getAttribute('data-model') || '';
+                const text = row.textContent.toLowerCase();
+                const detailsRow = document.getElementById(modelName + '-details');
+
+                if (term === '' || text.includes(term)) {
+                    row.style.display = '';
+                    if (detailsRow && detailsRow.style.display !== 'none') {
+                        detailsRow.style.display = '';
+                    }
+                } else {
+                    row.style.display = 'none';
+                    if (detailsRow) {
+                        detailsRow.style.display = 'none';
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

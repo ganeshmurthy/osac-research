@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSAC - AI Grid Clusters</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@patternfly/patternfly@5.2.0/patternfly.min.css">
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+    <!-- Top Masthead -->
+    <header class="pf-v5-c-masthead">
+        <div class="pf-v5-c-masthead__main">
+            <div class="pf-v5-c-masthead__toggle">
+                <button class="pf-v5-c-button pf-m-plain" type="button" onclick="toggleSidebar()">
+                    <span>☰</span>
+                </button>
+            </div>
+            <a class="pf-v5-c-masthead__brand" href="index.html">
+                <span style="font-weight: 600; font-size: 18px; color: white;">OSAC Control Panel</span>
+            </a>
+        </div>
+        <div class="pf-v5-c-masthead__content">
+            <div class="user-info">
+                <span class="role-badge admin-badge">ADMIN</span>
+                <span class="username">admin@osac.cloud</span>
+                <a href="index.html" class="logout-link">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="pf-v5-c-page">
+        <!-- Sidebar Navigation -->
+        <aside class="pf-v5-c-page__sidebar" id="sidebar">
+            <div class="pf-v5-c-page__sidebar-body">
+                <nav class="pf-v5-c-nav">
+                    <ul class="pf-v5-c-nav__list">
+                        <li class="pf-v5-c-nav__item">
+                            <a href="admin.html" class="pf-v5-c-nav__link">📚 Catalog</a>
+                        </li>
+                        <li class="pf-v5-c-nav__section">
+                            <h2 class="pf-v5-c-nav__section-title">AI Grid</h2>
+                            <ul class="pf-v5-c-nav__list">
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="ai-grid-clusters.html" class="pf-v5-c-nav__link pf-m-current">🖥️ Grid Clusters</a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="ai-grid-models.html" class="pf-v5-c-nav__link">🤖 Models</a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="ai-grid-subscriptions.html" class="pf-v5-c-nav__link">📋 Subscriptions</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="pf-v5-c-nav__item">
+                            <a href="admin.html" class="pf-v5-c-nav__link">← Back to Admin</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="pf-v5-c-page__main">
+            <div class="content-area">
+                <div class="page-header">
+                    <div>
+                        <h1>AI Grid Clusters <span style="background: #c9190b; color: white; font-size: 14px; padding: 4px 12px; border-radius: 4px; font-weight: 600; margin-left: 12px;">AI Grid MVP</span></h1>
+                        <p style="color: #6a6e73; font-size: 16px; margin-top: 8px;">
+                            Manage AI Grid membership and provisioning readiness. Enroll OSAC-provisioned clusters to enable AI workload distribution via ACM.
+                        </p>
+                    </div>
+                    <button class="pf-v5-c-button pf-m-secondary" onclick="refreshClusters()">
+                        Refresh
+                    </button>
+                </div>
+
+                <!-- Search Toolbar -->
+                <div style="margin: 24px 0; padding: 16px; background: white; border: 1px solid #d2d2d2; border-radius: 4px;">
+                    <input type="text"
+                           id="cluster-search"
+                           placeholder="Search clusters by name"
+                           style="padding: 8px 12px; border: 1px solid #d2d2d2; border-radius: 4px; width: 300px;"
+                           oninput="filterClusters(this.value)">
+                </div>
+
+                <!-- Info Banner -->
+                <div style="margin-bottom: 24px; padding: 16px; background: #e7f1fa; border-radius: 8px; border-left: 4px solid #06c;">
+                    <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">ℹ️ About AI Grid Enrollment</div>
+                    <div style="font-size: 14px; color: #151515; line-height: 1.5;">
+                        Only clusters provisioned through OSAC can be enrolled in AI Grid. Once enrolled, clusters become available for AI model deployment via ACM (Advanced Cluster Management).
+                    </div>
+                </div>
+
+                <!-- Clusters Table -->
+                <table class="pf-v5-c-table" id="clusters-table">
+                    <thead>
+                        <tr>
+                            <th>Cluster</th>
+                            <th>Tenant</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>AI Grid</th>
+                            <th>Provisioning</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- acme-corp clusters -->
+                        <tr data-cluster-name="production-ocp-1">
+                            <td>
+                                <strong>production-ocp-1</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">OpenShift 4.14.8</div>
+                            </td>
+                            <td>acme-corp</td>
+                            <td>us-east-1</td>
+                            <td><span class="status-badge status-active">Ready</span></td>
+                            <td>
+                                <span class="status-badge" style="background: #3e8635; color: white;">Member</span>
+                            </td>
+                            <td><span class="status-badge status-active">Provisioned</span></td>
+                            <td>
+                                <span style="color: #6a6e73; font-size: 14px;">AI Grid Member</span>
+                            </td>
+                        </tr>
+                        <tr data-cluster-name="staging-ocp-1">
+                            <td>
+                                <strong>staging-ocp-1</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">OpenShift 4.14.8</div>
+                            </td>
+                            <td>acme-corp</td>
+                            <td>us-west-2</td>
+                            <td><span class="status-badge status-active">Ready</span></td>
+                            <td>Not enrolled</td>
+                            <td><span class="status-badge status-active">Provisioned</span></td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-primary" onclick="enrollCluster('staging-ocp-1')">
+                                    Add to AI Grid
+                                </button>
+                            </td>
+                        </tr>
+                        <tr data-cluster-name="dev-ocp-1">
+                            <td>
+                                <strong>dev-ocp-1</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">OpenShift 4.14.8</div>
+                            </td>
+                            <td>acme-corp</td>
+                            <td>us-east-1</td>
+                            <td><span class="status-badge status-active">Ready</span></td>
+                            <td>Not enrolled</td>
+                            <td><span class="status-badge status-active">Provisioned</span></td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-primary" onclick="enrollCluster('dev-ocp-1')">
+                                    Add to AI Grid
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- globex-inc clusters -->
+                        <tr data-cluster-name="globex-prod-cluster">
+                            <td>
+                                <strong>globex-prod-cluster</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">OpenShift 4.15.2</div>
+                            </td>
+                            <td>globex-inc</td>
+                            <td>eu-west-1</td>
+                            <td><span class="status-badge status-active">Ready</span></td>
+                            <td>
+                                <span class="status-badge" style="background: #3e8635; color: white;">Member</span>
+                            </td>
+                            <td><span class="status-badge status-active">Provisioned</span></td>
+                            <td>
+                                <span style="color: #6a6e73; font-size: 14px;">AI Grid Member</span>
+                            </td>
+                        </tr>
+                        <tr data-cluster-name="globex-analytics">
+                            <td>
+                                <strong>globex-analytics</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">OpenShift 4.15.2</div>
+                            </td>
+                            <td>globex-inc</td>
+                            <td>eu-central-1</td>
+                            <td><span class="status-badge status-active">Ready</span></td>
+                            <td>
+                                <span class="status-badge" style="background: #3e8635; color: white;">Member</span>
+                            </td>
+                            <td><span class="status-badge status-active">Provisioned</span></td>
+                            <td>
+                                <span style="color: #6a6e73; font-size: 14px;">AI Grid Member</span>
+                            </td>
+                        </tr>
+
+                        <!-- initech clusters -->
+                        <tr data-cluster-name="initech-main">
+                            <td>
+                                <strong>initech-main</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">OpenShift 4.14.5</div>
+                            </td>
+                            <td>initech</td>
+                            <td>us-central-1</td>
+                            <td><span class="status-badge" style="background: #c9190b; color: white;">Offline</span></td>
+                            <td>Not enrolled</td>
+                            <td><span class="status-badge" style="background: #8b8d8f; color: white;">Unknown</span></td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-secondary" disabled title="Cluster must be Ready to enroll">
+                                    Add to AI Grid
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- waynetech clusters -->
+                        <tr data-cluster-name="wayne-ocp-prod">
+                            <td>
+                                <strong>wayne-ocp-prod</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">OpenShift 4.15.0</div>
+                            </td>
+                            <td>waynetech</td>
+                            <td>us-east-2</td>
+                            <td><span class="status-badge status-active">Ready</span></td>
+                            <td>Not enrolled</td>
+                            <td><span class="status-badge status-active">Provisioned</span></td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-primary" onclick="enrollCluster('wayne-ocp-prod')">
+                                    Add to AI Grid
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Summary Stats -->
+                <div style="margin-top: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                    <div class="info-card">
+                        <div style="font-size: 14px; color: #6a6e73; margin-bottom: 4px;">Total Clusters</div>
+                        <div style="font-size: 28px; font-weight: 600;">8</div>
+                    </div>
+                    <div class="info-card">
+                        <div style="font-size: 14px; color: #6a6e73; margin-bottom: 4px;">AI Grid Members</div>
+                        <div style="font-size: 28px; font-weight: 600; color: #3e8635;">4</div>
+                    </div>
+                    <div class="info-card">
+                        <div style="font-size: 14px; color: #6a6e73; margin-bottom: 4px;">Ready to Enroll</div>
+                        <div style="font-size: 28px; font-weight: 600; color: #06c;">3</div>
+                    </div>
+                    <div class="info-card">
+                        <div style="font-size: 14px; color: #6a6e73; margin-bottom: 4px;">Offline</div>
+                        <div style="font-size: 28px; font-weight: 600; color: #c9190b;">1</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="common.js"></script>
+    <script>
+        function enrollCluster(clusterName) {
+            if (confirm(`Enroll ${clusterName} to AI Grid?\n\nThis will create an ACM ManagedCluster resource and enable AI workload distribution.`)) {
+                // Simulate enrollment
+                const button = event.target;
+                button.textContent = 'Enrolling...';
+                button.disabled = true;
+                button.classList.add('pf-m-progress');
+
+                setTimeout(() => {
+                    const row = button.closest('tr');
+                    const aiGridCell = row.cells[4];
+                    const actionCell = row.cells[6];
+
+                    aiGridCell.innerHTML = '<span class="status-badge" style="background: #3e8635; color: white;">Member</span>';
+                    actionCell.innerHTML = '<span style="color: #6a6e73; font-size: 14px;">AI Grid Member</span>';
+
+                    alert(`✓ ${clusterName} successfully enrolled in AI Grid!`);
+                    updateStats();
+                }, 1500);
+            }
+        }
+
+        function refreshClusters() {
+            alert('Refreshing cluster list from OSAC fulfillment API and ACM Hub...');
+            location.reload();
+        }
+
+        function filterClusters(searchTerm) {
+            const rows = document.querySelectorAll('#clusters-table tbody tr');
+            const term = searchTerm.toLowerCase();
+
+            rows.forEach(row => {
+                const clusterName = row.getAttribute('data-cluster-name') || '';
+                const text = row.textContent.toLowerCase();
+
+                if (term === '' || text.includes(term)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function updateStats() {
+            // Update summary stats (simplified for mockup)
+            const members = document.querySelectorAll('#clusters-table tbody tr').length;
+            // Real implementation would recalculate from DOM
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSAC - Tenant User</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@patternfly/patternfly@5.2.0/patternfly.min.css">
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+    <!-- Top Masthead -->
+    <header class="pf-v5-c-masthead">
+        <div class="pf-v5-c-masthead__main">
+            <div class="pf-v5-c-masthead__toggle">
+                <button class="pf-v5-c-button pf-m-plain" type="button" onclick="toggleSidebar()">
+                    <span>☰</span>
+                </button>
+            </div>
+            <a class="pf-v5-c-masthead__brand" href="index.html">
+                <span style="font-weight: 600; font-size: 18px; color: white;">OSAC Control Panel</span>
+            </a>
+        </div>
+        <div class="pf-v5-c-masthead__content">
+            <div class="user-info">
+                <span class="role-badge tenant-user-badge">TENANT USER</span>
+                <span class="username">developer@acme-corp</span>
+                <span style="color: #8b8d8f; margin: 0 8px;">|</span>
+                <span style="color: #f0f0f0; font-size: 13px;">acme-corp</span>
+                <a href="index.html" class="logout-link">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="pf-v5-c-page">
+        <!-- Sidebar Navigation -->
+        <aside class="pf-v5-c-page__sidebar" id="sidebar">
+            <div class="pf-v5-c-page__sidebar-body">
+                <nav class="pf-v5-c-nav">
+                    <ul class="pf-v5-c-nav__list">
+                        <li class="pf-v5-c-nav__item">
+                            <a href="#" class="pf-v5-c-nav__link pf-m-current" onclick="loadPage('catalog')">
+                                📚 Catalog
+                            </a>
+                        </li>
+                        <li class="pf-v5-c-nav__section">
+                            <h2 class="pf-v5-c-nav__section-title">Services</h2>
+                            <ul class="pf-v5-c-nav__list">
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('bare-metal')">
+                                        🔧 Bare Metal
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('clusters')">
+                                        🖥️ Clusters
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('vms')">
+                                        💻 Virtual Machines
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="pf-v5-c-nav__section">
+                            <h2 class="pf-v5-c-nav__section-title">Networking</h2>
+                            <ul class="pf-v5-c-nav__list">
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('virtual-networks')">
+                                        🔌 Virtual Networks
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('security-groups')">
+                                        🛡️ Security Groups
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('external-ips')">
+                                        🌐 External IPs
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="pf-v5-c-nav__item">
+                            <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('secrets')">
+                                🔐 Secrets
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="pf-v5-c-page__main" id="main-content">
+            <!-- Default: Catalog Page -->
+            <div class="content-area">
+                <div class="page-header">
+                    <h1>Service Catalog</h1>
+                </div>
+
+                <div style="margin-bottom: 32px;">
+                    <p style="color: #6a6e73; font-size: 16px; line-height: 1.5;">
+                        Deploy infrastructure resources for your applications. Select a service to get started.
+                    </p>
+                </div>
+
+                <div class="catalog-grid">
+                    <div class="catalog-card" onclick="alert('Deploy OpenShift Cluster wizard would open')">
+                        <h3>🖥️ OpenShift Cluster</h3>
+                        <p>Deploy a fully managed OpenShift 4.14 cluster with customizable node configuration and high availability.</p>
+                        <div style="margin-top: 16px;">
+                            <span class="catalog-tag">CAAS</span>
+                            <div style="margin-top: 12px; font-size: 13px; color: #6a6e73;">
+                                <div>✓ Managed control plane</div>
+                                <div>✓ Auto-scaling workers</div>
+                                <div>✓ Integrated monitoring</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="catalog-card" onclick="alert('Deploy RHEL VM wizard would open')">
+                        <h3>💻 RHEL 9 Virtual Machine</h3>
+                        <p>Red Hat Enterprise Linux 9 virtual machine with your choice of instance type and storage.</p>
+                        <div style="margin-top: 16px;">
+                            <span class="catalog-tag">VMAAS</span>
+                            <div style="margin-top: 12px; font-size: 13px; color: #6a6e73;">
+                                <div>✓ Multiple instance sizes</div>
+                                <div>✓ Persistent storage</div>
+                                <div>✓ Network configuration</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="catalog-card" onclick="alert('Request Bare Metal wizard would open')">
+                        <h3>🔧 Bare Metal Server</h3>
+                        <p>High-performance dedicated bare metal server for demanding workloads.</p>
+                        <div style="margin-top: 16px;">
+                            <span class="catalog-tag">BMAAS</span>
+                            <div style="margin-top: 12px; font-size: 13px; color: #6a6e73;">
+                                <div>✓ Dedicated hardware</div>
+                                <div>✓ High I/O performance</div>
+                                <div>✓ Custom configurations</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="catalog-card" onclick="alert('Create Volume wizard would open')">
+                        <h3>💾 Persistent Volume</h3>
+                        <p>Block or file storage with your choice of performance tier and size.</p>
+                        <div style="margin-top: 16px;">
+                            <span class="catalog-tag">STORAGE</span>
+                            <div style="margin-top: 12px; font-size: 13px; color: #6a6e73;">
+                                <div>✓ Fast SSD or standard HDD</div>
+                                <div>✓ Snapshots & backups</div>
+                                <div>✓ Dynamic resizing</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="catalog-card" onclick="alert('Create Network wizard would open')">
+                        <h3>🔌 Virtual Network</h3>
+                        <p>Isolated virtual network with custom CIDR and subnet configuration.</p>
+                        <div style="margin-top: 16px;">
+                            <span class="catalog-tag">NETWORK</span>
+                            <div style="margin-top: 12px; font-size: 13px; color: #6a6e73;">
+                                <div>✓ Custom IP ranges</div>
+                                <div>✓ Multiple subnets</div>
+                                <div>✓ Security groups</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="catalog-card" onclick="alert('Ubuntu VM wizard would open')">
+                        <h3>🐧 Ubuntu Server</h3>
+                        <p>Ubuntu Server 22.04 LTS virtual machine for modern cloud workloads.</p>
+                        <div style="margin-top: 16px;">
+                            <span class="catalog-tag">VMAAS</span>
+                            <div style="margin-top: 12px; font-size: 13px; color: #6a6e73;">
+                                <div>✓ LTS version</div>
+                                <div>✓ Cloud-init support</div>
+                                <div>✓ Package updates included</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="common.js"></script>
+    <script>
+        function loadPage(page) {
+            document.querySelectorAll('.pf-v5-c-nav__link').forEach(link => {
+                link.classList.remove('pf-m-current');
+            });
+            event.target.classList.add('pf-m-current');
+
+            const content = document.getElementById('main-content');
+            const pages = {
+                'catalog': getCatalogPage(),
+                'clusters': getClustersPage(),
+                'bare-metal': getBareMetalPage(),
+                'vms': getVMsPage(),
+                'virtual-networks': getVirtualNetworksPage(),
+                'security-groups': getSecurityGroupsPage(),
+                'external-ips': getExternalIPsPage(),
+                'secrets': getSecretsPage()
+            };
+
+            content.innerHTML = pages[page] || '<div class="content-area"><h1>' + page + '</h1><p>Content loading...</p></div>';
+        }
+
+        function getCatalogPage() {
+            return document.getElementById('main-content').innerHTML;
+        }
+
+        function getClustersPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>My Clusters</h1>
+                    </div>
+                    <p style="color: #6a6e73; margin-bottom: 24px;">View and manage your OpenShift clusters.</p>
+                    <table class="pf-v5-c-table">
+                        <thead><tr><th>Cluster Name</th><th>Version</th><th>Nodes</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>production-ocp-1</strong></td>
+                                <td>OpenShift 4.14.8</td>
+                                <td>9 nodes</td>
+                                <td><span class="status-badge status-active">Running</span></td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link">Console</button>
+                                    <button class="pf-v5-c-button pf-m-link">Details</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>staging-ocp-1</strong></td>
+                                <td>OpenShift 4.14.8</td>
+                                <td>6 nodes</td>
+                                <td><span class="status-badge status-active">Running</span></td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link">Console</button>
+                                    <button class="pf-v5-c-button pf-m-link">Details</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getBareMetalPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Bare Metal Servers</h1>
+                    </div>
+                    <p style="color: #6a6e73; margin-bottom: 24px;">Your dedicated bare metal servers.</p>
+                    <div class="empty-state">
+                        <h2>No bare metal servers</h2>
+                        <p>You don't have any bare metal servers yet. Request one from the catalog to get started.</p>
+                        <button class="pf-v5-c-button pf-m-primary" onclick="loadPage('catalog')">Go to Catalog</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getVMsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Virtual Machines</h1>
+                    </div>
+                    <p style="color: #6a6e73; margin-bottom: 24px;">View and manage your virtual machines.</p>
+                    <table class="pf-v5-c-table">
+                        <thead><tr><th>Name</th><th>OS</th><th>Instance Type</th><th>IP Address</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>my-dev-vm</strong></td>
+                                <td>RHEL 9.2</td>
+                                <td>small (2 vCPU, 4 GB)</td>
+                                <td>10.0.1.50</td>
+                                <td><span class="status-badge status-active">Running</span></td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link">Console</button>
+                                    <button class="pf-v5-c-button pf-m-link">Stop</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getVirtualNetworksPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Virtual Networks</h1>
+                    </div>
+                    <p style="color: #6a6e73; margin-bottom: 24px;">View your virtual networks and subnets.</p>
+                    <table class="pf-v5-c-table">
+                        <thead><tr><th>Name</th><th>CIDR</th><th>Subnets</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>prod-vpc</strong></td>
+                                <td>10.0.0.0/16</td>
+                                <td>3</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getSecurityGroupsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Security Groups</h1>
+                    </div>
+                    <p style="color: #6a6e73; margin-bottom: 24px;">Manage firewall rules for your instances.</p>
+                    <table class="pf-v5-c-table">
+                        <thead><tr><th>Name</th><th>Description</th><th>Rules</th><th>Applied To</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>default</strong></td>
+                                <td>Default security group</td>
+                                <td>Allow all outbound</td>
+                                <td>1 instance</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getExternalIPsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>External IPs</h1>
+                    </div>
+                    <p style="color: #6a6e73; margin-bottom: 24px;">Public IP addresses attached to your resources.</p>
+                    <div class="empty-state">
+                        <h2>No external IPs allocated</h2>
+                        <p>You haven't allocated any external IP addresses yet.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getSecretsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Secrets</h1>
+                    </div>
+                    <p style="color: #6a6e73; margin-bottom: 24px;">Manage sensitive configuration data.</p>
+                    <table class="pf-v5-c-table">
+                        <thead><tr><th>Name</th><th>Type</th><th>Created</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>my-api-key</strong></td>
+                                <td>Generic</td>
+                                <td>2026-10-10</td>
+                                <td><button class="pf-v5-c-button pf-m-link">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

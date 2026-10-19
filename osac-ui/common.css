@@ -1,0 +1,409 @@
+/* OSAC UI Common Styles */
+
+body {
+    margin: 0;
+    font-family: RedHatDisplay, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f0f0f0;
+}
+
+/* Masthead Styling */
+.pf-v5-c-masthead {
+    background: #151515;
+    color: white;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 64px;
+    border-bottom: 3px solid #06c;
+}
+
+.pf-v5-c-masthead__main {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.pf-v5-c-masthead__toggle button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.pf-v5-c-masthead__brand {
+    color: white;
+    text-decoration: none;
+}
+
+.pf-v5-c-masthead__content {
+    display: flex;
+    align-items: center;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.role-badge {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.admin-badge {
+    background: #f0ab00;
+    color: #151515;
+}
+
+.tenant-admin-badge {
+    background: #06c;
+    color: white;
+}
+
+.tenant-user-badge {
+    background: #3e8635;
+    color: white;
+}
+
+.idp-manager-badge {
+    background: #009596;
+    color: white;
+}
+
+.username {
+    color: #f0f0f0;
+    font-size: 14px;
+}
+
+.logout-link {
+    color: #73bcf7;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.logout-link:hover {
+    text-decoration: underline;
+}
+
+/* Page Layout */
+.pf-v5-c-page {
+    display: flex;
+    height: calc(100vh - 64px);
+}
+
+.pf-v5-c-page__sidebar {
+    width: 280px;
+    background: white;
+    border-right: 1px solid #d2d2d2;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+.pf-v5-c-page__sidebar.hidden {
+    display: none;
+}
+
+.pf-v5-c-page__sidebar-body {
+    padding: 16px 0;
+}
+
+.pf-v5-c-page__main {
+    flex: 1;
+    overflow-y: auto;
+    background: #f0f0f0;
+}
+
+/* Navigation */
+.pf-v5-c-nav__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.pf-v5-c-nav__item {
+    margin: 0;
+}
+
+.pf-v5-c-nav__link {
+    display: block;
+    padding: 12px 24px;
+    color: #151515;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.15s;
+}
+
+.pf-v5-c-nav__link:hover {
+    background: #f0f0f0;
+}
+
+.pf-v5-c-nav__link.pf-m-current {
+    background: #e7f1fa;
+    color: #06c;
+    border-left: 3px solid #06c;
+    font-weight: 600;
+}
+
+.pf-v5-c-nav__section {
+    margin-top: 24px;
+}
+
+.pf-v5-c-nav__section:first-child {
+    margin-top: 0;
+}
+
+.pf-v5-c-nav__section-title {
+    padding: 8px 24px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6a6e73;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+/* Content Area */
+.content-area {
+    padding: 32px;
+    max-width: 1400px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.page-header h1 {
+    font-size: 28px;
+    color: #151515;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Tables */
+.pf-v5-c-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border: 1px solid #d2d2d2;
+    border-radius: 4px;
+}
+
+.pf-v5-c-table thead {
+    background: #f0f0f0;
+    border-bottom: 2px solid #d2d2d2;
+}
+
+.pf-v5-c-table th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+    color: #151515;
+}
+
+.pf-v5-c-table td {
+    padding: 16px;
+    border-top: 1px solid #f0f0f0;
+    font-size: 14px;
+    color: #151515;
+}
+
+.pf-v5-c-table tbody tr:hover {
+    background: #f9f9f9;
+}
+
+/* Buttons */
+.pf-v5-c-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.pf-v5-c-button.pf-m-primary {
+    background: #06c;
+    color: white;
+}
+
+.pf-v5-c-button.pf-m-primary:hover {
+    background: #004080;
+}
+
+.pf-v5-c-button.pf-m-link {
+    background: none;
+    color: #06c;
+    padding: 4px 8px;
+}
+
+.pf-v5-c-button.pf-m-link:hover {
+    text-decoration: underline;
+}
+
+.pf-v5-c-button.pf-m-plain {
+    background: none;
+    padding: 8px;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-active {
+    background: #e7f5e9;
+    color: #1e4f18;
+}
+
+.status-pending {
+    background: #fdf7e7;
+    color: #795600;
+}
+
+.status-failed {
+    background: #faeae8;
+    color: #7d1007;
+}
+
+.status-degraded {
+    background: #fef6e9;
+    color: #8f4700;
+}
+
+/* Catalog Grid */
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.catalog-card {
+    background: white;
+    border: 1px solid #d2d2d2;
+    border-radius: 8px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.catalog-card:hover {
+    border-color: #06c;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.catalog-card h3 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    color: #151515;
+}
+
+.catalog-card p {
+    margin: 0 0 16px 0;
+    color: #6a6e73;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.catalog-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #151515;
+    text-transform: uppercase;
+}
+
+/* Empty States */
+.empty-state {
+    text-align: center;
+    padding: 80px 40px;
+    background: white;
+    border: 1px solid #d2d2d2;
+    border-radius: 8px;
+}
+
+.empty-state h2 {
+    font-size: 24px;
+    color: #151515;
+    margin: 0 0 12px 0;
+}
+
+.empty-state p {
+    color: #6a6e73;
+    font-size: 16px;
+    margin: 0 0 24px 0;
+}
+
+/* Cards */
+.info-card {
+    background: white;
+    border: 1px solid #d2d2d2;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.info-card h2 {
+    font-size: 18px;
+    color: #151515;
+    margin: 0 0 16px 0;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.info-item {
+    padding: 12px;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.info-item label {
+    display: block;
+    font-size: 12px;
+    color: #6a6e73;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.info-item value {
+    display: block;
+    font-size: 16px;
+    color: #151515;
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pf-v5-c-page__sidebar {
+        position: absolute;
+        z-index: 100;
+        height: calc(100vh - 64px);
+    }
+
+    .catalog-grid {
+        grid-template-columns: 1fr;
+    }
+}

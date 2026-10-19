@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSAC - Identity Provider Manager</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@patternfly/patternfly@5.2.0/patternfly.min.css">
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+    <!-- Top Masthead -->
+    <header class="pf-v5-c-masthead">
+        <div class="pf-v5-c-masthead__main">
+            <div class="pf-v5-c-masthead__toggle">
+                <button class="pf-v5-c-button pf-m-plain" type="button" onclick="toggleSidebar()">
+                    <span>☰</span>
+                </button>
+            </div>
+            <a class="pf-v5-c-masthead__brand" href="index.html">
+                <span style="font-weight: 600; font-size: 18px; color: white;">OSAC Control Panel</span>
+            </a>
+        </div>
+        <div class="pf-v5-c-masthead__content">
+            <div class="user-info">
+                <span class="role-badge idp-manager-badge">IDP MANAGER</span>
+                <span class="username">idp-admin@acme-corp</span>
+                <span style="color: #8b8d8f; margin: 0 8px;">|</span>
+                <span style="color: #f0f0f0; font-size: 13px;">acme-corp</span>
+                <a href="index.html" class="logout-link">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="pf-v5-c-page">
+        <!-- Sidebar Navigation -->
+        <aside class="pf-v5-c-page__sidebar" id="sidebar">
+            <div class="pf-v5-c-page__sidebar-body">
+                <nav class="pf-v5-c-nav">
+                    <ul class="pf-v5-c-nav__list">
+                        <li class="pf-v5-c-nav__item">
+                            <a href="#" class="pf-v5-c-nav__link pf-m-current" onclick="loadPage('identity-provider')">
+                                🔑 Identity Providers
+                            </a>
+                        </li>
+                        <li class="pf-v5-c-nav__item">
+                            <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('role-bindings')">
+                                👥 Role Bindings
+                            </a>
+                        </li>
+                        <li class="pf-v5-c-nav__item">
+                            <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('secrets')">
+                                🔐 Secrets
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="pf-v5-c-page__main" id="main-content">
+            <!-- Default: Identity Provider Page -->
+            <div class="content-area">
+                <div class="page-header">
+                    <h1>Identity Providers</h1>
+                    <button class="pf-v5-c-button pf-m-primary" onclick="alert('Configure Identity Provider wizard would open')">
+                        Add Identity Provider
+                    </button>
+                </div>
+
+                <div style="margin-bottom: 32px;">
+                    <p style="color: #6a6e73; font-size: 16px; line-height: 1.5;">
+                        Configure authentication methods for your tenant. Users will be able to sign in using any of the configured identity providers.
+                    </p>
+                </div>
+
+                <!-- OIDC Provider Card -->
+                <div class="info-card">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <h2 style="margin: 0 0 8px 0;">ACME Corp SSO</h2>
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+                        <button class="pf-v5-c-button pf-m-plain" onclick="alert('Provider menu')">⋮</button>
+                    </div>
+
+                    <div style="margin-top: 24px;">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>Type</label>
+                                <value>OpenID Connect</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Issuer URL</label>
+                                <value>https://sso.acme.com/auth/realms/acme</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Client ID</label>
+                                <value>osac-acme-client</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Client Secret</label>
+                                <value>************ (stored in secrets)</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Authorization Endpoint</label>
+                                <value>https://sso.acme.com/auth/realms/acme/protocol/openid-connect/auth</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Token Endpoint</label>
+                                <value>https://sso.acme.com/auth/realms/acme/protocol/openid-connect/token</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Default Scopes</label>
+                                <value>openid profile email</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Validate Signature</label>
+                                <value>✓ Enabled</value>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #d2d2d2;">
+                            <h3 style="font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">Configuration Status</h3>
+                            <div style="display: grid; gap: 12px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="color: #3e8635; font-size: 18px;">✓</span>
+                                    <span style="font-size: 14px; color: #151515;">Issuer URL is reachable</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="color: #3e8635; font-size: 18px;">✓</span>
+                                    <span style="font-size: 14px; color: #151515;">OIDC discovery successful</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="color: #3e8635; font-size: 18px;">✓</span>
+                                    <span style="font-size: 14px; color: #151515;">Client credentials validated</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="color: #3e8635; font-size: 18px;">✓</span>
+                                    <span style="font-size: 14px; color: #151515;">Last test login: 2026-10-17 09:15 UTC</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 24px; display: flex; gap: 12px;">
+                            <button class="pf-v5-c-button pf-m-primary" onclick="alert('Edit configuration')">
+                                Edit Configuration
+                            </button>
+                            <button class="pf-v5-c-button pf-m-secondary" onclick="alert('Test connection initiated')">
+                                Test Connection
+                            </button>
+                            <button class="pf-v5-c-button pf-m-link" style="color: #c9190b;" onclick="confirmDialog('Are you sure you want to disable this identity provider?', () => alert('Provider disabled'))">
+                                Disable Provider
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add provider hint -->
+                <div style="margin-top: 24px; padding: 16px; background: #f0f0f0; border-radius: 8px; border-left: 4px solid #06c;">
+                    <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">💡 Tip</div>
+                    <div style="font-size: 14px; color: #151515; line-height: 1.5;">
+                        You can configure multiple identity providers. Users will be able to choose which provider to use when signing in.
+                        Supported providers: OpenID Connect, SAML, LDAP, and GitHub.
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="common.js"></script>
+    <script>
+        function loadPage(page) {
+            document.querySelectorAll('.pf-v5-c-nav__link').forEach(link => {
+                link.classList.remove('pf-m-current');
+            });
+            event.target.classList.add('pf-m-current');
+
+            const content = document.getElementById('main-content');
+            const pages = {
+                'identity-provider': getIdentityProviderPage(),
+                'role-bindings': getRoleBindingsPage(),
+                'secrets': getSecretsPage()
+            };
+
+            content.innerHTML = pages[page] || '<div class="content-area"><h1>' + page + '</h1><p>Content loading...</p></div>';
+        }
+
+        function getIdentityProviderPage() {
+            return document.getElementById('main-content').innerHTML;
+        }
+
+        function getRoleBindingsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Role Bindings</h1>
+                        <button class="pf-v5-c-button pf-m-primary" onclick="alert('Create role binding wizard would open')">
+                            Create Role Binding
+                        </button>
+                    </div>
+
+                    <div style="margin-bottom: 32px;">
+                        <p style="color: #6a6e73; font-size: 16px; line-height: 1.5;">
+                            Assign roles to users and groups to control access to resources within your tenant.
+                        </p>
+                    </div>
+
+                    <table class="pf-v5-c-table">
+                        <thead>
+                            <tr>
+                                <th>Binding Name</th>
+                                <th>Role</th>
+                                <th>Subject Type</th>
+                                <th>Subjects</th>
+                                <th>Scope</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>admins-tenant-admin</strong></td>
+                                <td>tenant-admin</td>
+                                <td>Group</td>
+                                <td>admins (5 members)</td>
+                                <td>Tenant-wide</td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('Edit binding')">Edit</button>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('View members')">Members</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>developers-tenant-user</strong></td>
+                                <td>tenant-user</td>
+                                <td>Group</td>
+                                <td>developers (12 members)</td>
+                                <td>Tenant-wide</td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('Edit binding')">Edit</button>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('View members')">Members</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>ops-team-project-admin</strong></td>
+                                <td>project-admin</td>
+                                <td>Group</td>
+                                <td>ops-team (3 members)</td>
+                                <td>Project: production</td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('Edit binding')">Edit</button>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('View members')">Members</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>alice-idp-manager</strong></td>
+                                <td>tenant-idp-manager</td>
+                                <td>User</td>
+                                <td>alice@acme.com</td>
+                                <td>Tenant-wide</td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('Edit binding')">Edit</button>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="confirmDialog('Remove this role binding?', () => alert('Binding removed'))">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 32px;">
+                        <div class="info-card">
+                            <h2>Available Roles</h2>
+                            <div style="margin-top: 16px;">
+                                <table class="pf-v5-c-table">
+                                    <thead>
+                                        <tr><th>Role</th><th>Description</th><th>Permissions</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>tenant-admin</strong></td>
+                                            <td>Full tenant administration</td>
+                                            <td>All tenant resources</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>tenant-user</strong></td>
+                                            <td>Standard tenant user</td>
+                                            <td>Deploy and manage own resources</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>tenant-idp-manager</strong></td>
+                                            <td>Identity provider manager</td>
+                                            <td>Configure IdP and role bindings</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>project-admin</strong></td>
+                                            <td>Project administrator</td>
+                                            <td>Manage project resources</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>project-viewer</strong></td>
+                                            <td>Project viewer</td>
+                                            <td>Read-only project access</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getSecretsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Secrets</h1>
+                        <button class="pf-v5-c-button pf-m-primary" onclick="alert('Create secret wizard would open')">
+                            Create Secret
+                        </button>
+                    </div>
+
+                    <div style="margin-bottom: 32px;">
+                        <p style="color: #6a6e73; font-size: 16px; line-height: 1.5;">
+                            Manage secrets used for identity provider configuration and other sensitive data.
+                        </p>
+                    </div>
+
+                    <table class="pf-v5-c-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Used By</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>acme-oidc-client-secret</strong></td>
+                                <td>Generic</td>
+                                <td>Identity Provider: ACME Corp SSO</td>
+                                <td>2026-09-15</td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('View secret (redacted)')">View</button>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('Update secret')">Update</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>saml-signing-cert</strong></td>
+                                <td>TLS</td>
+                                <td>Not in use</td>
+                                <td>2026-10-01</td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('View secret (redacted)')">View</button>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="confirmDialog('Delete this secret?', () => alert('Secret deleted'))">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 24px; padding: 16px; background: #faeae8; border-radius: 8px; border-left: 4px solid #c9190b;">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #7d1007;">⚠️ Security Warning</div>
+                        <div style="font-size: 14px; color: #151515; line-height: 1.5;">
+                            Secrets are encrypted at rest and in transit. Never share secret values through insecure channels.
+                            Regularly rotate secrets used for authentication and authorization.
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

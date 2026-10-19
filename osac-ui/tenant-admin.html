@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSAC - Tenant Administrator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@patternfly/patternfly@5.2.0/patternfly.min.css">
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+    <!-- Top Masthead -->
+    <header class="pf-v5-c-masthead">
+        <div class="pf-v5-c-masthead__main">
+            <div class="pf-v5-c-masthead__toggle">
+                <button class="pf-v5-c-button pf-m-plain" type="button" onclick="toggleSidebar()">
+                    <span>☰</span>
+                </button>
+            </div>
+            <a class="pf-v5-c-masthead__brand" href="index.html">
+                <span style="font-weight: 600; font-size: 18px; color: white;">OSAC Control Panel</span>
+            </a>
+        </div>
+        <div class="pf-v5-c-masthead__content">
+            <div class="user-info">
+                <span class="role-badge tenant-admin-badge">TENANT ADMIN</span>
+                <span class="username">admin@acme-corp</span>
+                <span style="color: #8b8d8f; margin: 0 8px;">|</span>
+                <span style="color: #f0f0f0; font-size: 13px;">acme-corp</span>
+                <a href="index.html" class="logout-link">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="pf-v5-c-page">
+        <!-- Sidebar Navigation -->
+        <aside class="pf-v5-c-page__sidebar" id="sidebar">
+            <div class="pf-v5-c-page__sidebar-body">
+                <nav class="pf-v5-c-nav">
+                    <ul class="pf-v5-c-nav__list">
+                        <li class="pf-v5-c-nav__item">
+                            <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('catalog')">
+                                📚 Catalog
+                            </a>
+                        </li>
+                        <li class="pf-v5-c-nav__section">
+                            <h2 class="pf-v5-c-nav__section-title">Services</h2>
+                            <ul class="pf-v5-c-nav__list">
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('bare-metal')">
+                                        🔧 Bare Metal
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link pf-m-current" onclick="loadPage('clusters')">
+                                        🖥️ Clusters
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('vms')">
+                                        💻 Virtual Machines
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="pf-v5-c-nav__item">
+                            <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('projects')">
+                                📁 Projects
+                            </a>
+                        </li>
+                        <li class="pf-v5-c-nav__section">
+                            <h2 class="pf-v5-c-nav__section-title">AI Grid</h2>
+                            <ul class="pf-v5-c-nav__list">
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('ai-grid-enrollment')">
+                                        ✨ Grid Enrollment
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('ai-model-deployments')">
+                                        🤖 Model Deployments
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('ai-subscriptions')">
+                                        📋 Subscriptions
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="pf-v5-c-nav__section">
+                            <h2 class="pf-v5-c-nav__section-title">Storage</h2>
+                            <ul class="pf-v5-c-nav__list">
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('volumes')">
+                                        💾 Volumes
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="pf-v5-c-nav__item">
+                            <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('identity-provider')">
+                                🔑 Identity Providers
+                            </a>
+                        </li>
+                        <li class="pf-v5-c-nav__item">
+                            <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('role-bindings')">
+                                👥 Role Bindings
+                            </a>
+                        </li>
+                        <li class="pf-v5-c-nav__section">
+                            <h2 class="pf-v5-c-nav__section-title">Networking</h2>
+                            <ul class="pf-v5-c-nav__list">
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('virtual-networks')">
+                                        🔌 Virtual Networks
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('security-groups')">
+                                        🛡️ Security Groups
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('external-ips')">
+                                        🌐 External IPs
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="pf-v5-c-nav__item">
+                            <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('secrets')">
+                                🔐 Secrets
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="pf-v5-c-page__main" id="main-content">
+            <!-- Default: Clusters Page -->
+            <div class="content-area">
+                <div class="page-header">
+                    <h1>Clusters</h1>
+                    <button class="pf-v5-c-button pf-m-primary" onclick="alert('Create Cluster wizard would open')">
+                        Create Cluster
+                    </button>
+                </div>
+
+                <!-- Cluster Cards -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 24px;">
+                    <div class="info-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <h2 style="margin: 0 0 8px 0;">production-ocp-1</h2>
+                                <span class="status-badge status-active">Running</span>
+                            </div>
+                            <button class="pf-v5-c-button pf-m-plain" onclick="alert('Cluster menu')">⋮</button>
+                        </div>
+                        <div style="margin-top: 16px;">
+                            <div class="info-item" style="margin-bottom: 12px;">
+                                <label>Version</label>
+                                <value>OpenShift 4.14.8</value>
+                            </div>
+                            <div class="info-item" style="margin-bottom: 12px;">
+                                <label>Nodes</label>
+                                <value>3 control-plane, 6 worker</value>
+                            </div>
+                            <div class="info-item" style="margin-bottom: 12px;">
+                                <label>Region</label>
+                                <value>us-east-1</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Created</label>
+                                <value>2026-09-15</value>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px; display: flex; gap: 8px;">
+                            <button class="pf-v5-c-button pf-m-link" onclick="alert('Open console')">Console</button>
+                            <button class="pf-v5-c-button pf-m-link" onclick="alert('View details')">Details</button>
+                            <button class="pf-v5-c-button pf-m-link" onclick="alert('Download kubeconfig')">Kubeconfig</button>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div style="display: flex; justify-content: between; align-items: start;">
+                            <div>
+                                <h2 style="margin: 0 0 8px 0;">staging-ocp-1</h2>
+                                <span class="status-badge status-active">Running</span>
+                            </div>
+                            <button class="pf-v5-c-button pf-m-plain" onclick="alert('Cluster menu')">⋮</button>
+                        </div>
+                        <div style="margin-top: 16px;">
+                            <div class="info-item" style="margin-bottom: 12px;">
+                                <label>Version</label>
+                                <value>OpenShift 4.14.8</value>
+                            </div>
+                            <div class="info-item" style="margin-bottom: 12px;">
+                                <label>Nodes</label>
+                                <value>3 control-plane, 3 worker</value>
+                            </div>
+                            <div class="info-item" style="margin-bottom: 12px;">
+                                <label>Region</label>
+                                <value>us-west-2</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Created</label>
+                                <value>2026-09-20</value>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px; display: flex; gap: 8px;">
+                            <button class="pf-v5-c-button pf-m-link" onclick="alert('Open console')">Console</button>
+                            <button class="pf-v5-c-button pf-m-link" onclick="alert('View details')">Details</button>
+                            <button class="pf-v5-c-button pf-m-link" onclick="alert('Download kubeconfig')">Kubeconfig</button>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <h2 style="margin: 0 0 8px 0;">dev-ocp-1</h2>
+                                <span class="status-badge status-pending">Provisioning</span>
+                            </div>
+                            <button class="pf-v5-c-button pf-m-plain" onclick="alert('Cluster menu')">⋮</button>
+                        </div>
+                        <div style="margin-top: 16px;">
+                            <div class="info-item" style="margin-bottom: 12px;">
+                                <label>Version</label>
+                                <value>OpenShift 4.14.8</value>
+                            </div>
+                            <div class="info-item" style="margin-bottom: 12px;">
+                                <label>Nodes</label>
+                                <value>1 control-plane, 2 worker (target)</value>
+                            </div>
+                            <div class="info-item" style="margin-bottom: 12px;">
+                                <label>Region</label>
+                                <value>us-east-1</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Started</label>
+                                <value>2026-10-17 (10 minutes ago)</value>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px;">
+                            <div style="font-size: 12px; color: #6a6e73;">Provisioning nodes... 60% complete</div>
+                            <div style="background: #f0f0f0; height: 8px; border-radius: 4px; margin-top: 8px; overflow: hidden;">
+                                <div style="background: #06c; height: 100%; width: 60%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="common.js"></script>
+    <script>
+        function loadPage(page) {
+            document.querySelectorAll('.pf-v5-c-nav__link').forEach(link => {
+                link.classList.remove('pf-m-current');
+            });
+            event.target.classList.add('pf-m-current');
+
+            const content = document.getElementById('main-content');
+            const pages = {
+                'clusters': getClustersPage(),
+                'catalog': getCatalogPage(),
+                'projects': getProjectsPage(),
+                'bare-metal': getBareMetalPage(),
+                'vms': getVMsPage(),
+                'volumes': getVolumesPage(),
+                'ai-grid-enrollment': getAIGridEnrollmentPage(),
+                'ai-model-deployments': getAIModelDeploymentsPage(),
+                'ai-subscriptions': getAISubscriptionsPage(),
+                'identity-provider': getIdentityProviderPage(),
+                'role-bindings': getRoleBindingsPage(),
+                'virtual-networks': getVirtualNetworksPage(),
+                'security-groups': getSecurityGroupsPage(),
+                'external-ips': getExternalIPsPage(),
+                'secrets': getSecretsPage()
+            };
+
+            content.innerHTML = pages[page] || '<div class="content-area"><h1>' + page + '</h1><p>Content loading...</p></div>';
+        }
+
+        function getClustersPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Clusters</h1>
+                        <button class="pf-v5-c-button pf-m-primary" onclick="alert('Deploy cluster wizard would open')">
+                            Deploy Cluster
+                        </button>
+                    </div>
+
+                    <p style="color: #6a6e73; margin-bottom: 32px;">
+                        Your OSAC-provisioned OpenShift clusters. Clusters can be enrolled in AI Grid for model deployment.
+                    </p>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 24px;">
+                        <div class="info-card">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <h2 style="margin: 0 0 8px 0;">production-ocp-1</h2>
+                                    <span class="status-badge status-active">Running</span>
+                                </div>
+                                <button class="pf-v5-c-button pf-m-plain" onclick="alert('Cluster menu')">⋮</button>
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <div class="info-item" style="margin-bottom: 12px;">
+                                    <label>Version</label>
+                                    <value>OpenShift 4.14.8</value>
+                                </div>
+                                <div class="info-item" style="margin-bottom: 12px;">
+                                    <label>Nodes</label>
+                                    <value>3 control-plane, 6 worker</value>
+                                </div>
+                                <div class="info-item" style="margin-bottom: 12px;">
+                                    <label>Region</label>
+                                    <value>us-east-1</value>
+                                </div>
+                                <div class="info-item">
+                                    <label>Created</label>
+                                    <value>2026-08-15</value>
+                                </div>
+                            </div>
+                            <div style="margin-top: 16px; display: flex; gap: 8px;">
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('Open console')">Console</button>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('View details')">Details</button>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('Download kubeconfig')">Kubeconfig</button>
+                            </div>
+                            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #d2d2d2;">
+                                <div style="font-size: 13px; color: #3e8635; font-weight: 600;">✓ Enrolled in AI Grid</div>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <h2 style="margin: 0 0 8px 0;">staging-ocp-1</h2>
+                                    <span class="status-badge status-active">Running</span>
+                                </div>
+                                <button class="pf-v5-c-button pf-m-plain" onclick="alert('Cluster menu')">⋮</button>
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <div class="info-item" style="margin-bottom: 12px;">
+                                    <label>Version</label>
+                                    <value>OpenShift 4.14.8</value>
+                                </div>
+                                <div class="info-item" style="margin-bottom: 12px;">
+                                    <label>Nodes</label>
+                                    <value>3 control-plane, 3 worker</value>
+                                </div>
+                                <div class="info-item" style="margin-bottom: 12px;">
+                                    <label>Region</label>
+                                    <value>us-west-2</value>
+                                </div>
+                                <div class="info-item">
+                                    <label>Created</label>
+                                    <value>2026-09-20</value>
+                                </div>
+                            </div>
+                            <div style="margin-top: 16px; display: flex; gap: 8px;">
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('Open console')">Console</button>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('View details')">Details</button>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('Download kubeconfig')">Kubeconfig</button>
+                            </div>
+                            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #d2d2d2;">
+                                <div style="font-size: 13px; color: #6a6e73;">
+                                    Not enrolled • <a href="#" onclick="loadPage('ai-grid-enrollment'); return false;" style="color: #06c;">Enroll in AI Grid</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <h2 style="margin: 0 0 8px 0;">dev-ocp-1</h2>
+                                    <span class="status-badge status-pending">Provisioning</span>
+                                </div>
+                                <button class="pf-v5-c-button pf-m-plain" onclick="alert('Cluster menu')">⋮</button>
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <div class="info-item" style="margin-bottom: 12px;">
+                                    <label>Version</label>
+                                    <value>OpenShift 4.14.8</value>
+                                </div>
+                                <div class="info-item" style="margin-bottom: 12px;">
+                                    <label>Nodes</label>
+                                    <value>1 control-plane, 2 worker (target)</value>
+                                </div>
+                                <div class="info-item" style="margin-bottom: 12px;">
+                                    <label>Region</label>
+                                    <value>us-east-1</value>
+                                </div>
+                                <div class="info-item">
+                                    <label>Started</label>
+                                    <value>2026-10-17 (10 minutes ago)</value>
+                                </div>
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <div style="font-size: 12px; color: #6a6e73;">Provisioning nodes... 60% complete</div>
+                                <div style="background: #f0f0f0; height: 8px; border-radius: 4px; margin-top: 8px; overflow: hidden;">
+                                    <div style="background: #06c; height: 100%; width: 60%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getCatalogPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Catalog</h1>
+                    </div>
+                    <div class="catalog-grid">
+                        <div class="catalog-card" onclick="alert('Deploy OpenShift Cluster')">
+                            <h3>🖥️ OpenShift Cluster</h3>
+                            <p>Deploy a fully managed OpenShift 4.14 cluster with high availability</p>
+                            <span class="catalog-tag">CAAS</span>
+                        </div>
+                        <div class="catalog-card" onclick="alert('Deploy RHEL VM')">
+                            <h3>💻 RHEL 9 Virtual Machine</h3>
+                            <p>Red Hat Enterprise Linux 9 with your choice of instance size</p>
+                            <span class="catalog-tag">VMAAS</span>
+                        </div>
+                        <div class="catalog-card" onclick="alert('Request Bare Metal')">
+                            <h3>🔧 Bare Metal Server</h3>
+                            <p>High-performance dedicated bare metal server</p>
+                            <span class="catalog-tag">BMAAS</span>
+                        </div>
+                        <div class="catalog-card" onclick="alert('Create Volume')">
+                            <h3>💾 Persistent Volume</h3>
+                            <p>Block or file storage with your choice of performance tier</p>
+                            <span class="catalog-tag">STORAGE</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getProjectsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Projects</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Create Project</button>
+                    </div>
+                    <table class="pf-v5-c-table">
+                        <thead><tr><th>Name</th><th>Description</th><th>Resources</th><th>Created</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>production</strong></td>
+                                <td>Production workloads</td>
+                                <td>2 clusters, 12 VMs, 5 volumes</td>
+                                <td>2026-09-15</td>
+                                <td><button class="pf-v5-c-button pf-m-link">View</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>staging</strong></td>
+                                <td>Staging environment</td>
+                                <td>1 cluster, 6 VMs, 3 volumes</td>
+                                <td>2026-09-20</td>
+                                <td><button class="pf-v5-c-button pf-m-link">View</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>development</strong></td>
+                                <td>Development and testing</td>
+                                <td>1 cluster, 4 VMs, 2 volumes</td>
+                                <td>2026-10-01</td>
+                                <td><button class="pf-v5-c-button pf-m-link">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getBareMetalPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Bare Metal Servers</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Request Server</button>
+                    </div>
+                    <table class="pf-v5-c-table">
+                        <thead><tr><th>Name</th><th>Type</th><th>CPU</th><th>RAM</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>bm-prod-db-01</strong></td>
+                                <td>bm-compute</td>
+                                <td>2x Xeon Gold</td>
+                                <td>384 GB</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td><button class="pf-v5-c-button pf-m-link">Manage</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>bm-prod-db-02</strong></td>
+                                <td>bm-compute</td>
+                                <td>2x Xeon Gold</td>
+                                <td>384 GB</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td><button class="pf-v5-c-button pf-m-link">Manage</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getVMsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Virtual Machines</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Create VM</button>
+                    </div>
+                    <table class="pf-v5-c-table">
+                        <thead><tr><th>Name</th><th>OS</th><th>Instance Type</th><th>IP Address</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>web-server-01</strong></td>
+                                <td>RHEL 9.2</td>
+                                <td>medium (4 vCPU, 8 GB)</td>
+                                <td>10.0.1.10</td>
+                                <td><span class="status-badge status-active">Running</span></td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link">Console</button>
+                                    <button class="pf-v5-c-button pf-m-link">Stop</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>web-server-02</strong></td>
+                                <td>RHEL 9.2</td>
+                                <td>medium (4 vCPU, 8 GB)</td>
+                                <td>10.0.1.11</td>
+                                <td><span class="status-badge status-active">Running</span></td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link">Console</button>
+                                    <button class="pf-v5-c-button pf-m-link">Stop</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>app-server-01</strong></td>
+                                <td>Ubuntu 22.04</td>
+                                <td>large (8 vCPU, 16 GB)</td>
+                                <td>10.0.1.20</td>
+                                <td><span class="status-badge status-active">Running</span></td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link">Console</button>
+                                    <button class="pf-v5-c-button pf-m-link">Stop</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getVolumesPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Storage Volumes</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Create Volume</button>
+                    </div>
+                    <table class="pf-v5-c-table">
+                        <thead><tr><th>Name</th><th>Size</th><th>Tier</th><th>Attached To</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>prod-db-data</strong></td>
+                                <td>500 GB</td>
+                                <td>fast-ssd</td>
+                                <td>bm-prod-db-01</td>
+                                <td><span class="status-badge status-active">In Use</span></td>
+                                <td><button class="pf-v5-c-button pf-m-link">Manage</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>app-storage</strong></td>
+                                <td>200 GB</td>
+                                <td>standard</td>
+                                <td>app-server-01</td>
+                                <td><span class="status-badge status-active">In Use</span></td>
+                                <td><button class="pf-v5-c-button pf-m-link">Manage</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>backup-vol-1</strong></td>
+                                <td>1 TB</td>
+                                <td>archive</td>
+                                <td>-</td>
+                                <td><span class="status-badge status-active">Available</span></td>
+                                <td><button class="pf-v5-c-button pf-m-link">Attach</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getIdentityProviderPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Identity Providers</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Configure Identity Provider</button>
+                    </div>
+                    <div class="info-card">
+                        <h2>ACME Corp SSO</h2>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>Type</label>
+                                <value>OIDC</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Issuer</label>
+                                <value>https://sso.acme.com</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Client ID</label>
+                                <value>osac-acme-client</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Status</label>
+                                <value><span class="status-badge status-active">Active</span></value>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px;">
+                            <button class="pf-v5-c-button pf-m-link">Edit Configuration</button>
+                            <button class="pf-v5-c-button pf-m-link">Test Connection</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getRoleBindingsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Role Bindings</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Create Role Binding</button>
+                    </div>
+                    <table class="pf-v5-c-table">
+                        <thead><tr><th>Name</th><th>Role</th><th>Subjects</th><th>Scope</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>admins-binding</strong></td>
+                                <td>tenant-admin</td>
+                                <td>Group: admins (5 members)</td>
+                                <td>Tenant-wide</td>
+                                <td><button class="pf-v5-c-button pf-m-link">Edit</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>developers-binding</strong></td>
+                                <td>tenant-user</td>
+                                <td>Group: developers (12 members)</td>
+                                <td>Tenant-wide</td>
+                                <td><button class="pf-v5-c-button pf-m-link">Edit</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getVirtualNetworksPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Virtual Networks</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Create Network</button>
+                    </div>
+                    <table class="pf-v5-c-table">
+                        <thead><tr><th>Name</th><th>CIDR</th><th>Subnets</th><th>Instances</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>prod-vpc</strong></td>
+                                <td>10.0.0.0/16</td>
+                                <td>3</td>
+                                <td>18</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>staging-vpc</strong></td>
+                                <td>10.1.0.0/16</td>
+                                <td>2</td>
+                                <td>8</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getSecurityGroupsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Security Groups</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Create Security Group</button>
+                    </div>
+                    <table class="pf-v5-c-table">
+                        <thead><tr><th>Name</th><th>Description</th><th>Rules</th><th>Applied To</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>web-tier</strong></td>
+                                <td>Web servers security group</td>
+                                <td>Ingress: 80, 443</td>
+                                <td>2 instances</td>
+                                <td><button class="pf-v5-c-button pf-m-link">Edit Rules</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>app-tier</strong></td>
+                                <td>Application servers security group</td>
+                                <td>Ingress: 8080, 8443</td>
+                                <td>1 instance</td>
+                                <td><button class="pf-v5-c-button pf-m-link">Edit Rules</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getExternalIPsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>External IPs</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Allocate IP</button>
+                    </div>
+                    <table class="pf-v5-c-table">
+                        <thead><tr><th>IP Address</th><th>Attached To</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>203.0.113.45</strong></td>
+                                <td>web-server-01</td>
+                                <td>Floating IP</td>
+                                <td><span class="status-badge status-active">In Use</span></td>
+                                <td><button class="pf-v5-c-button pf-m-link">Detach</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>203.0.113.46</strong></td>
+                                <td>web-server-02</td>
+                                <td>Floating IP</td>
+                                <td><span class="status-badge status-active">In Use</span></td>
+                                <td><button class="pf-v5-c-button pf-m-link">Detach</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>203.0.113.47</strong></td>
+                                <td>-</td>
+                                <td>Floating IP</td>
+                                <td><span class="status-badge status-active">Available</span></td>
+                                <td><button class="pf-v5-c-button pf-m-link">Attach</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getSecretsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Secrets</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Create Secret</button>
+                    </div>
+                    <table class="pf-v5-c-table">
+                        <thead><tr><th>Name</th><th>Type</th><th>Project</th><th>Created</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>database-password</strong></td>
+                                <td>Generic</td>
+                                <td>production</td>
+                                <td>2026-09-15</td>
+                                <td><button class="pf-v5-c-button pf-m-link">View</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>api-key</strong></td>
+                                <td>Token</td>
+                                <td>production</td>
+                                <td>2026-09-18</td>
+                                <td><button class="pf-v5-c-button pf-m-link">View</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>tls-cert</strong></td>
+                                <td>TLS</td>
+                                <td>production</td>
+                                <td>2026-10-01</td>
+                                <td><button class="pf-v5-c-button pf-m-link">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getAIGridEnrollmentPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>AI Grid Enrollment <span style="background: #c9190b; color: white; font-size: 14px; padding: 4px 12px; border-radius: 4px; font-weight: 600; margin-left: 12px;">AI Grid MVP</span></h1>
+                        <p style="color: #6a6e73; font-size: 16px; margin-top: 8px;">
+                            Enroll your OSAC-provisioned clusters into AI Grid to enable AI model deployment.
+                        </p>
+                    </div>
+
+                    <div style="margin-bottom: 24px; padding: 16px; background: #e7f1fa; border-radius: 8px; border-left: 4px solid #06c;">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">ℹ️ Tenant-Scoped View</div>
+                        <div style="font-size: 14px; color: #151515; line-height: 1.5;">
+                            Showing only clusters owned by <strong>acme-corp</strong> tenant. Clusters must be Ready before enrollment.
+                        </div>
+                    </div>
+
+                    <table class="pf-v5-c-table">
+                        <thead>
+                            <tr>
+                                <th>Cluster</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>AI Grid</th>
+                                <th>Provisioning</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong>production-ocp-1</strong>
+                                    <div style="font-size: 13px; color: #6a6e73;">OpenShift 4.14.8</div>
+                                </td>
+                                <td>us-east-1</td>
+                                <td><span class="status-badge status-active">Ready</span></td>
+                                <td>
+                                    <span class="status-badge" style="background: #3e8635; color: white;">Member</span>
+                                </td>
+                                <td><span class="status-badge status-active">Provisioned</span></td>
+                                <td>
+                                    <span style="color: #6a6e73; font-size: 14px;">AI Grid Member</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>staging-ocp-1</strong>
+                                    <div style="font-size: 13px; color: #6a6e73;">OpenShift 4.14.8</div>
+                                </td>
+                                <td>us-west-2</td>
+                                <td><span class="status-badge status-active">Ready</span></td>
+                                <td>Not enrolled</td>
+                                <td><span class="status-badge status-active">Provisioned</span></td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-primary" onclick="alert('Enrolling staging-ocp-1 to AI Grid...')">
+                                        Add to AI Grid
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>dev-ocp-1</strong>
+                                    <div style="font-size: 13px; color: #6a6e73;">OpenShift 4.14.8</div>
+                                </td>
+                                <td>us-east-1</td>
+                                <td><span class="status-badge status-pending">Provisioning</span></td>
+                                <td>Not enrolled</td>
+                                <td><span class="status-badge status-pending">In Progress</span></td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-secondary" disabled title="Cluster must be Ready to enroll">
+                                        Add to AI Grid
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 24px; padding: 16px; background: #f0f0f0; border-radius: 8px;">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">💡 Next Steps</div>
+                        <div style="font-size: 14px; color: #151515; line-height: 1.5;">
+                            1. Enroll your Ready clusters to AI Grid<br>
+                            2. Create a model subscription in <a href="#" onclick="loadPage('ai-subscriptions')" style="color: #06c;">Subscriptions</a><br>
+                            3. Deploy models to enrolled clusters in <a href="#" onclick="loadPage('ai-model-deployments')" style="color: #06c;">Model Deployments</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getAIModelDeploymentsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <div>
+                            <h1>Model Deployments <span style="background: #c9190b; color: white; font-size: 14px; padding: 4px 12px; border-radius: 4px; font-weight: 600; margin-left: 12px;">AI Grid MVP</span></h1>
+                            <p style="color: #6a6e73; font-size: 16px; margin-top: 8px;">
+                                Deploy and manage AI models on your enrolled AI Grid clusters.
+                            </p>
+                        </div>
+                        <button class="pf-v5-c-button pf-m-primary" onclick="alert('Deploy model wizard would open (tenant-scoped)')">
+                            Deploy Model
+                        </button>
+                    </div>
+
+                    <div style="margin-bottom: 24px; padding: 16px; background: #e7f1fa; border-radius: 8px; border-left: 4px solid #06c;">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">ℹ️ Tenant-Scoped View</div>
+                        <div style="font-size: 14px; color: #151515; line-height: 1.5;">
+                            Showing only model deployments for <strong>acme-corp</strong> tenant. Models can only be deployed to your enrolled clusters.
+                        </div>
+                    </div>
+
+                    <table class="pf-v5-c-table">
+                        <thead>
+                            <tr>
+                                <th>Model Deployment Name</th>
+                                <th>Model</th>
+                                <th>Replica Count</th>
+                                <th>Locations</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong>llama-3-production</strong>
+                                    <div style="font-size: 13px; color: #6a6e73;">Production LLaMA 3 70B deployment</div>
+                                </td>
+                                <td>meta-llama/llama-3-70b</td>
+                                <td>3</td>
+                                <td>1 location (production-ocp-1)</td>
+                                <td><span class="status-badge" style="background: #06c; color: white;">Saved to Git</span></td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('View deployment details')">View</button>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('Delete deployment')">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>mistral-7b-dev</strong>
+                                    <div style="font-size: 13px; color: #6a6e73;">Development testing deployment</div>
+                                </td>
+                                <td>mistralai/mistral-7b-instruct</td>
+                                <td>2</td>
+                                <td>1 location (dev-ocp-1)</td>
+                                <td><span class="status-badge status-pending">Deploying</span></td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('View deployment details')">View</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 24px; padding: 16px; background: #faeae8; border-radius: 8px; border-left: 4px solid #c9190b;">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">⚠️ Prerequisites</div>
+                        <div style="font-size: 14px; color: #151515; line-height: 1.5;">
+                            To deploy a model, you must:<br>
+                            1. Have at least one enrolled AI Grid cluster<br>
+                            2. Have an active subscription for the model you want to deploy
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getAISubscriptionsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <div>
+                            <h1>Subscriptions <span style="background: #c9190b; color: white; font-size: 14px; padding: 4px 12px; border-radius: 4px; font-weight: 600; margin-left: 12px;">AI Grid MVP</span></h1>
+                            <p style="color: #6a6e73; font-size: 16px; margin-top: 8px;">
+                                Manage your subscriptions to Models as a Service (MaaS).
+                            </p>
+                        </div>
+                        <button class="pf-v5-c-button pf-m-primary" onclick="alert('Create subscription wizard would open')">
+                            Create Subscription
+                        </button>
+                    </div>
+
+                    <div style="margin-bottom: 24px; padding: 16px; background: #e7f1fa; border-radius: 8px; border-left: 4px solid #06c;">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">ℹ️ Tenant-Scoped View</div>
+                        <div style="font-size: 14px; color: #151515; line-height: 1.5;">
+                            Showing only subscriptions for <strong>acme-corp</strong> tenant.
+                        </div>
+                    </div>
+
+                    <table class="pf-v5-c-table">
+                        <thead>
+                            <tr>
+                                <th>Subscription Name</th>
+                                <th>Model</th>
+                                <th>Plan</th>
+                                <th>Status</th>
+                                <th>Usage (30d)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong>acme-llama-enterprise</strong>
+                                    <div style="font-size: 13px; color: #6a6e73;">Enterprise LLaMA subscription</div>
+                                </td>
+                                <td>meta-llama/llama-3-70b</td>
+                                <td>
+                                    <span class="status-badge" style="background: #f4c145; color: #151515;">Enterprise</span>
+                                </td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td>
+                                    <div>287.5M tokens</div>
+                                    <div style="font-size: 12px; color: #6a6e73;">$4,312.50</div>
+                                </td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('View subscription details')">View</button>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('Edit subscription')">Edit</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>acme-mistral-dev</strong>
+                                    <div style="font-size: 13px; color: #6a6e73;">Development testing</div>
+                                </td>
+                                <td>mistralai/mistral-7b-instruct</td>
+                                <td>
+                                    <span class="status-badge" style="background: #8b8d8f; color: white;">Starter</span>
+                                </td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td>
+                                    <div>8.2M tokens</div>
+                                    <div style="font-size: 12px; color: #6a6e73;">$41.00</div>
+                                </td>
+                                <td>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('View subscription details')">View</button>
+                                    <button class="pf-v5-c-button pf-m-link" onclick="alert('Edit subscription')">Edit</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                        <div class="info-card">
+                            <div style="font-size: 14px; color: #6a6e73; margin-bottom: 4px;">Total Subscriptions</div>
+                            <div style="font-size: 28px; font-weight: 600;">2</div>
+                        </div>
+                        <div class="info-card">
+                            <div style="font-size: 14px; color: #6a6e73; margin-bottom: 4px;">Monthly Cost (30d)</div>
+                            <div style="font-size: 28px; font-weight: 600; color: #06c;">$4,353.50</div>
+                        </div>
+                        <div class="info-card">
+                            <div style="font-size: 14px; color: #6a6e73; margin-bottom: 4px;">Active Models</div>
+                            <div style="font-size: 28px; font-weight: 600; color: #3e8635;">2</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px; padding: 16px; background: #e7f1fa; border-radius: 8px; border-left: 4px solid #06c;">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">ℹ️ Subscription Plans</div>
+                        <div style="font-size: 14px; color: #151515; line-height: 1.5;">
+                            <strong>Starter:</strong> Pay-as-you-go, up to 100M tokens/month<br>
+                            <strong>Professional:</strong> Fixed monthly rate, up to 500M tokens/month<br>
+                            <strong>Enterprise:</strong> Unlimited tokens, dedicated support, SLA guarantees
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

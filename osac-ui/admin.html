@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSAC - Platform Administrator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@patternfly/patternfly@5.2.0/patternfly.min.css">
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+    <!-- Top Masthead -->
+    <header class="pf-v5-c-masthead">
+        <div class="pf-v5-c-masthead__main">
+            <div class="pf-v5-c-masthead__toggle">
+                <button class="pf-v5-c-button pf-m-plain" type="button" onclick="toggleSidebar()">
+                    <span>☰</span>
+                </button>
+            </div>
+            <a class="pf-v5-c-masthead__brand" href="index.html">
+                <span style="font-weight: 600; font-size: 18px; color: white;">OSAC Control Panel</span>
+            </a>
+        </div>
+        <div class="pf-v5-c-masthead__content">
+            <div class="user-info">
+                <span class="role-badge admin-badge">ADMIN</span>
+                <span class="username">admin@osac.local</span>
+                <a href="index.html" class="logout-link">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="pf-v5-c-page">
+        <!-- Sidebar Navigation -->
+        <aside class="pf-v5-c-page__sidebar" id="sidebar">
+            <div class="pf-v5-c-page__sidebar-body">
+                <nav class="pf-v5-c-nav">
+                    <ul class="pf-v5-c-nav__list">
+                        <li class="pf-v5-c-nav__item">
+                            <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('catalog')">
+                                📚 Catalog
+                            </a>
+                        </li>
+                        <li class="pf-v5-c-nav__item">
+                            <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('projects')">
+                                📁 Projects
+                            </a>
+                        </li>
+                        <li class="pf-v5-c-nav__section">
+                            <h2 class="pf-v5-c-nav__section-title">Administration</h2>
+                            <ul class="pf-v5-c-nav__list">
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link pf-m-current" onclick="loadPage('tenants')">
+                                        🏢 Tenants
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="pf-v5-c-nav__section">
+                            <h2 class="pf-v5-c-nav__section-title">AI Grid</h2>
+                            <ul class="pf-v5-c-nav__list">
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="ai-grid-clusters.html" class="pf-v5-c-nav__link">
+                                        🖥️ Grid Clusters
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="ai-grid-models.html" class="pf-v5-c-nav__link">
+                                        🤖 Models
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="ai-grid-subscriptions.html" class="pf-v5-c-nav__link">
+                                        📋 Subscriptions
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="pf-v5-c-nav__section">
+                            <h2 class="pf-v5-c-nav__section-title">Storage</h2>
+                            <ul class="pf-v5-c-nav__list">
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('storage-backends')">
+                                        💾 Storage Backends
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('storage-tiers')">
+                                        📊 Storage Tiers
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="pf-v5-c-nav__section">
+                            <h2 class="pf-v5-c-nav__section-title">Infrastructure</h2>
+                            <ul class="pf-v5-c-nav__list">
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('instance-types')">
+                                        🖥️ Instance Types
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('external-ip-pools')">
+                                        🌐 External IP Pools
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('baremetal-types')">
+                                        🔧 Bare Metal Types
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('disk-images')">
+                                        💿 Disk Images
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="pf-v5-c-nav__section">
+                            <h2 class="pf-v5-c-nav__section-title">Networking</h2>
+                            <ul class="pf-v5-c-nav__list">
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('virtual-networks')">
+                                        🔌 Virtual Networks
+                                    </a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('security-groups')">
+                                        🛡️ Security Groups
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="pf-v5-c-nav__item">
+                            <a href="#" class="pf-v5-c-nav__link" onclick="loadPage('secrets')">
+                                🔐 Secrets
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="pf-v5-c-page__main" id="main-content">
+            <!-- Default: Tenants Page -->
+            <div class="content-area">
+                <div class="page-header">
+                    <h1>Tenants</h1>
+                    <button class="pf-v5-c-button pf-m-primary" onclick="alert('Create Tenant dialog would open')">
+                        Create Tenant
+                    </button>
+                </div>
+
+                <!-- Table -->
+                <table class="pf-v5-c-table pf-m-grid-md">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Organization</th>
+                            <th>Contact Email</th>
+                            <th>Domains</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>acme-corp</strong></td>
+                            <td>ACME Corporation</td>
+                            <td>admin@acme.com</td>
+                            <td>acme.cloud.local</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>2026-09-15</td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('Edit tenant')">Edit</button>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('View details')">View</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>globex-inc</strong></td>
+                            <td>Globex Inc</td>
+                            <td>ops@globex.com</td>
+                            <td>globex.cloud.local</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>2026-08-22</td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('Edit tenant')">Edit</button>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('View details')">View</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>initech</strong></td>
+                            <td>Initech Solutions</td>
+                            <td>contact@initech.com</td>
+                            <td>initech.cloud.local</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>2026-10-01</td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('Edit tenant')">Edit</button>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('View details')">View</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>waynetech</strong></td>
+                            <td>Wayne Technologies</td>
+                            <td>admin@waynetech.com</td>
+                            <td>wayne.cloud.local</td>
+                            <td><span class="status-badge status-pending">Provisioning</span></td>
+                            <td>2026-10-16</td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('Edit tenant')">Edit</button>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('View details')">View</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="common.js"></script>
+    <script>
+        function loadPage(page) {
+            // Update active nav item
+            document.querySelectorAll('.pf-v5-c-nav__link').forEach(link => {
+                link.classList.remove('pf-m-current');
+            });
+            event.target.classList.add('pf-m-current');
+
+            // Load different page content based on the page
+            const content = document.getElementById('main-content');
+
+            const pages = {
+                'tenants': getTe​nantsPage(),
+                'catalog': getCatalogPage(),
+                'projects': getProjectsPage(),
+                'storage-backends': getStorageBackendsPage(),
+                'storage-tiers': getStorageTiersPage(),
+                'instance-types': getInstanceTypesPage(),
+                'external-ip-pools': getExternalIPPoolsPage(),
+                'baremetal-types': getBareMetalTypesPage(),
+                'disk-images': getDiskImagesPage(),
+                'virtual-networks': getVirtualNetworksPage(),
+                'security-groups': getSecurityGroupsPage(),
+                'secrets': getSecretsPage()
+            };
+
+            content.innerHTML = pages[page] || '<div class="content-area"><h1>Page: ' + page + '</h1><p>Content loading...</p></div>';
+        }
+
+        function getTenantsPage() {
+            return document.getElementById('main-content').innerHTML; // Already loaded
+        }
+
+        function getCatalogPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Catalog</h1>
+                        <button class="pf-v5-c-button pf-m-primary" onclick="alert('Add catalog item')">Add Item</button>
+                    </div>
+                    <div class="catalog-grid">
+                        <div class="catalog-card">
+                            <h3>🖥️ OpenShift Cluster</h3>
+                            <p>Deploy a managed OpenShift cluster</p>
+                            <span class="catalog-tag">CAAS</span>
+                        </div>
+                        <div class="catalog-card">
+                            <h3>💻 RHEL 9 VM</h3>
+                            <p>Red Hat Enterprise Linux 9 virtual machine</p>
+                            <span class="catalog-tag">VMAAS</span>
+                        </div>
+                        <div class="catalog-card">
+                            <h3>🔧 Bare Metal Server</h3>
+                            <p>Dedicated bare metal server</p>
+                            <span class="catalog-tag">BMAAS</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getProjectsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Projects</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Create Project</button>
+                    </div>
+                    <table class="pf-v5-c-table pf-m-grid-md">
+                        <thead><tr><th>Project</th><th>Tenant</th><th>Resources</th><th>Created</th></tr></thead>
+                        <tbody>
+                            <tr><td>production</td><td>acme-corp</td><td>12 clusters, 45 VMs</td><td>2026-09-15</td></tr>
+                            <tr><td>development</td><td>acme-corp</td><td>3 clusters, 8 VMs</td><td>2026-09-20</td></tr>
+                            <tr><td>staging</td><td>globex-inc</td><td>5 clusters, 15 VMs</td><td>2026-08-25</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getStorageBackendsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Storage Backends</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Add Backend</button>
+                    </div>
+                    <table class="pf-v5-c-table pf-m-grid-md">
+                        <thead><tr><th>Name</th><th>Type</th><th>Endpoint</th><th>Status</th><th>Capacity</th></tr></thead>
+                        <tbody>
+                            <tr><td>ceph-prod</td><td>Ceph RBD</td><td>ceph.storage.local</td><td><span class="status-badge status-active">Healthy</span></td><td>500 TB</td></tr>
+                            <tr><td>nfs-backup</td><td>NFS</td><td>nfs.storage.local</td><td><span class="status-badge status-active">Healthy</span></td><td>200 TB</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getStorageTiersPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Storage Tiers</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Create Tier</button>
+                    </div>
+                    <table class="pf-v5-c-table pf-m-grid-md">
+                        <thead><tr><th>Name</th><th>Type</th><th>IOPS</th><th>Backend</th><th>Price/GB/Month</th></tr></thead>
+                        <tbody>
+                            <tr><td>fast-ssd</td><td>SSD</td><td>10,000</td><td>ceph-prod</td><td>$0.15</td></tr>
+                            <tr><td>standard</td><td>HDD</td><td>500</td><td>ceph-prod</td><td>$0.05</td></tr>
+                            <tr><td>archive</td><td>HDD</td><td>100</td><td>nfs-backup</td><td>$0.01</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getInstanceTypesPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Instance Types</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Create Instance Type</button>
+                    </div>
+                    <table class="pf-v5-c-table pf-m-grid-md">
+                        <thead><tr><th>Name</th><th>vCPUs</th><th>RAM</th><th>Disk</th><th>GPU</th><th>Price/Hour</th></tr></thead>
+                        <tbody>
+                            <tr><td>small</td><td>2</td><td>4 GB</td><td>50 GB</td><td>-</td><td>$0.10</td></tr>
+                            <tr><td>medium</td><td>4</td><td>8 GB</td><td>100 GB</td><td>-</td><td>$0.20</td></tr>
+                            <tr><td>large</td><td>8</td><td>16 GB</td><td>200 GB</td><td>-</td><td>$0.40</td></tr>
+                            <tr><td>gpu-small</td><td>4</td><td>16 GB</td><td>100 GB</td><td>1x A100</td><td>$2.50</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getExternalIPPoolsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>External IP Pools</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Create Pool</button>
+                    </div>
+                    <table class="pf-v5-c-table pf-m-grid-md">
+                        <thead><tr><th>Name</th><th>CIDR</th><th>Available</th><th>Allocated</th><th>Gateway</th></tr></thead>
+                        <tbody>
+                            <tr><td>public-pool-1</td><td>203.0.113.0/24</td><td>200</td><td>56</td><td>203.0.113.1</td></tr>
+                            <tr><td>public-pool-2</td><td>198.51.100.0/24</td><td>180</td><td>76</td><td>198.51.100.1</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getBareMetalTypesPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Bare Metal Instance Types</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Add Type</button>
+                    </div>
+                    <table class="pf-v5-c-table pf-m-grid-md">
+                        <thead><tr><th>Name</th><th>CPU</th><th>RAM</th><th>Disk</th><th>Network</th><th>Price/Month</th></tr></thead>
+                        <tbody>
+                            <tr><td>bm-compute</td><td>2x Xeon Gold 6248</td><td>384 GB</td><td>4x 1TB NVMe</td><td>2x 25GbE</td><td>$500</td></tr>
+                            <tr><td>bm-storage</td><td>2x Xeon Silver 4314</td><td>256 GB</td><td>12x 4TB SAS</td><td>2x 10GbE</td><td>$400</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getDiskImagesPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Disk Images</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Upload Image</button>
+                    </div>
+                    <table class="pf-v5-c-table pf-m-grid-md">
+                        <thead><tr><th>Name</th><th>OS</th><th>Version</th><th>Size</th><th>Format</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr><td>rhel-9.2</td><td>RHEL</td><td>9.2</td><td>1.2 GB</td><td>qcow2</td><td><span class="status-badge status-active">Available</span></td></tr>
+                            <tr><td>ubuntu-22.04</td><td>Ubuntu</td><td>22.04</td><td>900 MB</td><td>qcow2</td><td><span class="status-badge status-active">Available</span></td></tr>
+                            <tr><td>centos-stream-9</td><td>CentOS Stream</td><td>9</td><td>1.1 GB</td><td>qcow2</td><td><span class="status-badge status-active">Available</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getVirtualNetworksPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Virtual Networks</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Create Network</button>
+                    </div>
+                    <table class="pf-v5-c-table pf-m-grid-md">
+                        <thead><tr><th>Name</th><th>Tenant</th><th>CIDR</th><th>Subnets</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr><td>acme-prod-vpc</td><td>acme-corp</td><td>10.0.0.0/16</td><td>3</td><td><span class="status-badge status-active">Active</span></td></tr>
+                            <tr><td>globex-dev-vpc</td><td>globex-inc</td><td>10.1.0.0/16</td><td>2</td><td><span class="status-badge status-active">Active</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getSecurityGroupsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Security Groups</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Create Security Group</button>
+                    </div>
+                    <table class="pf-v5-c-table pf-m-grid-md">
+                        <thead><tr><th>Name</th><th>Tenant</th><th>Rules</th><th>Applied To</th></tr></thead>
+                        <tbody>
+                            <tr><td>web-servers</td><td>acme-corp</td><td>Allow 80, 443</td><td>12 instances</td></tr>
+                            <tr><td>databases</td><td>acme-corp</td><td>Allow 5432, 3306</td><td>5 instances</td></tr>
+                            <tr><td>ssh-bastion</td><td>globex-inc</td><td>Allow 22</td><td>2 instances</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getSecretsPage() {
+            return `
+                <div class="content-area">
+                    <div class="page-header">
+                        <h1>Secrets</h1>
+                        <button class="pf-v5-c-button pf-m-primary">Create Secret</button>
+                    </div>
+                    <table class="pf-v5-c-table pf-m-grid-md">
+                        <thead><tr><th>Name</th><th>Type</th><th>Tenant</th><th>Created</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            <tr><td>db-credentials</td><td>Generic</td><td>acme-corp</td><td>2026-10-10</td><td><button class="pf-v5-c-button pf-m-link">View</button></td></tr>
+                            <tr><td>api-token</td><td>Token</td><td>globex-inc</td><td>2026-10-05</td><td><button class="pf-v5-c-button pf-m-link">View</button></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

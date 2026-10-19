@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSAC - Deploy Model</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@patternfly/patternfly@5.2.0/patternfly.min.css">
+    <link rel="stylesheet" href="common.css">
+    <style>
+        .wizard-nav {
+            display: flex;
+            gap: 24px;
+            padding: 24px;
+            background: #f0f0f0;
+            border-bottom: 1px solid #d2d2d2;
+        }
+        .wizard-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6a6e73;
+            font-size: 14px;
+        }
+        .wizard-step.active {
+            color: #06c;
+            font-weight: 600;
+        }
+        .wizard-step.completed {
+            color: #3e8635;
+        }
+        .wizard-step-number {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #d2d2d2;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .wizard-step.active .wizard-step-number {
+            background: #06c;
+        }
+        .wizard-step.completed .wizard-step-number {
+            background: #3e8635;
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #151515;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d2d2d2;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .form-help {
+            font-size: 13px;
+            color: #6a6e73;
+            margin-top: 4px;
+        }
+        .location-selector {
+            border: 1px solid #d2d2d2;
+            border-radius: 4px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .location-selector input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Masthead -->
+    <header class="pf-v5-c-masthead">
+        <div class="pf-v5-c-masthead__main">
+            <div class="pf-v5-c-masthead__toggle">
+                <button class="pf-v5-c-button pf-m-plain" type="button" onclick="toggleSidebar()">
+                    <span>☰</span>
+                </button>
+            </div>
+            <a class="pf-v5-c-masthead__brand" href="index.html">
+                <span style="font-weight: 600; font-size: 18px; color: white;">OSAC Control Panel</span>
+            </a>
+        </div>
+        <div class="pf-v5-c-masthead__content">
+            <div class="user-info">
+                <span class="role-badge admin-badge">ADMIN</span>
+                <span class="username">admin@osac.cloud</span>
+                <a href="index.html" class="logout-link">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Wizard Navigation -->
+    <div class="wizard-nav">
+        <div class="wizard-step active" id="step-1">
+            <div class="wizard-step-number">1</div>
+            <span>Model Selection</span>
+        </div>
+        <div class="wizard-step" id="step-2">
+            <div class="wizard-step-number">2</div>
+            <span>Deployment Config</span>
+        </div>
+        <div class="wizard-step" id="step-3">
+            <div class="wizard-step-number">3</div>
+            <span>Locations</span>
+        </div>
+        <div class="wizard-step" id="step-4">
+            <div class="wizard-step-number">4</div>
+            <span>Review</span>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="pf-v5-c-page">
+        <!-- Main Content -->
+        <main class="pf-v5-c-page__main">
+            <div class="content-area">
+                <!-- Step 1: Model Selection -->
+                <div id="wizard-step-1">
+                    <h1>Select Model <span style="background: #c9190b; color: white; font-size: 14px; padding: 4px 12px; border-radius: 4px; font-weight: 600; margin-left: 12px;">AI Grid MVP</span></h1>
+                    <p style="color: #6a6e73; margin-bottom: 32px;">
+                        Choose a model from your active subscriptions to deploy.
+                    </p>
+
+                    <div class="form-group">
+                        <label for="tenant-select">Tenant *</label>
+                        <select id="tenant-select" required>
+                            <option value="">Select tenant...</option>
+                            <option value="acme-corp">acme-corp</option>
+                            <option value="globex-inc">globex-inc</option>
+                            <option value="waynetech">waynetech</option>
+                        </select>
+                        <div class="form-help">Only tenants with active subscriptions are shown.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="model-select">Model *</label>
+                        <select id="model-select" required>
+                            <option value="">Select model...</option>
+                            <option value="meta-llama/llama-3-70b">meta-llama/llama-3-70b (Enterprise subscription)</option>
+                            <option value="ibm/granite-code-34b">ibm/granite-code-34b (Professional subscription)</option>
+                            <option value="mistralai/mistral-7b-instruct">mistralai/mistral-7b-instruct (Starter subscription)</option>
+                            <option value="openai/whisper-large-v3">openai/whisper-large-v3 (Professional subscription)</option>
+                        </select>
+                        <div class="form-help">Available models based on selected tenant's subscriptions.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deployment-name">Deployment Name *</label>
+                        <input type="text" id="deployment-name" placeholder="e.g., llama-3-production" required>
+                        <div class="form-help">A unique name for this model deployment.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deployment-description">Description</label>
+                        <textarea id="deployment-description" placeholder="Optional description of this deployment's purpose"></textarea>
+                    </div>
+                </div>
+
+                <!-- Step 2: Deployment Config (hidden initially) -->
+                <div id="wizard-step-2" style="display: none;">
+                    <h1>Deployment Configuration <span style="background: #c9190b; color: white; font-size: 14px; padding: 4px 12px; border-radius: 4px; font-weight: 600; margin-left: 12px;">AI Grid MVP</span></h1>
+                    <p style="color: #6a6e73; margin-bottom: 32px;">
+                        Configure runtime parameters for the model deployment.
+                    </p>
+
+                    <div class="form-group">
+                        <label for="replica-count">Total Replica Count *</label>
+                        <input type="number" id="replica-count" value="2" min="1" max="20" required>
+                        <div class="form-help">Total number of replicas across all deployment locations.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="runtime-args">Runtime Arguments (JSON)</label>
+                        <textarea id="runtime-args" placeholder='{"max_tokens": 2048, "temperature": 0.7}'></textarea>
+                        <div class="form-help">Optional JSON configuration for model runtime parameters.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="auto-scaling"> Enable Auto-scaling
+                        </label>
+                        <div class="form-help">Automatically scale replicas based on load.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="resource-profile">Resource Profile *</label>
+                        <select id="resource-profile" required>
+                            <option value="small">Small (2 vCPU, 8 GB RAM)</option>
+                            <option value="medium" selected>Medium (4 vCPU, 16 GB RAM)</option>
+                            <option value="large">Large (8 vCPU, 32 GB RAM)</option>
+                            <option value="xlarge">X-Large (16 vCPU, 64 GB RAM)</option>
+                        </select>
+                        <div class="form-help">Resource allocation per replica.</div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Locations (hidden initially) -->
+                <div id="wizard-step-3" style="display: none;">
+                    <h1>Select Deployment Locations <span style="background: #c9190b; color: white; font-size: 14px; padding: 4px 12px; border-radius: 4px; font-weight: 600; margin-left: 12px;">AI Grid MVP</span></h1>
+                    <p style="color: #6a6e73; margin-bottom: 32px;">
+                        Choose AI Grid clusters where this model will be deployed. Replicas will be distributed across selected locations.
+                    </p>
+
+                    <div class="location-selector">
+                        <label>
+                            <input type="checkbox" name="location" value="production-ocp-1">
+                            <strong>production-ocp-1</strong> (acme-corp, us-east-1)
+                        </label>
+                        <div style="margin-left: 28px; font-size: 13px; color: #6a6e73;">
+                            AI Grid Member • OpenShift 4.14.8 • 9 nodes
+                        </div>
+                    </div>
+
+                    <div class="location-selector">
+                        <label>
+                            <input type="checkbox" name="location" value="globex-prod-cluster">
+                            <strong>globex-prod-cluster</strong> (globex-inc, eu-west-1)
+                        </label>
+                        <div style="margin-left: 28px; font-size: 13px; color: #6a6e73;">
+                            AI Grid Member • OpenShift 4.15.2 • 12 nodes
+                        </div>
+                    </div>
+
+                    <div class="location-selector">
+                        <label>
+                            <input type="checkbox" name="location" value="globex-analytics">
+                            <strong>globex-analytics</strong> (globex-inc, eu-central-1)
+                        </label>
+                        <div style="margin-left: 28px; font-size: 13px; color: #6a6e73;">
+                            AI Grid Member • OpenShift 4.15.2 • 6 nodes
+                        </div>
+                    </div>
+
+                    <div class="location-selector" style="opacity: 0.5;">
+                        <label>
+                            <input type="checkbox" name="location" value="staging-ocp-1" disabled>
+                            <strong>staging-ocp-1</strong> (acme-corp, us-west-2)
+                        </label>
+                        <div style="margin-left: 28px; font-size: 13px; color: #6a6e73;">
+                            Not enrolled in AI Grid
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px; padding: 16px; background: #e7f1fa; border-radius: 8px; border-left: 4px solid #06c;">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">ℹ️ Multi-location Deployment</div>
+                        <div style="font-size: 14px; color: #151515; line-height: 1.5;">
+                            Replicas will be evenly distributed across selected locations. ACM will manage synchronization and load balancing.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Review (hidden initially) -->
+                <div id="wizard-step-4" style="display: none;">
+                    <h1>Review Deployment <span style="background: #c9190b; color: white; font-size: 14px; padding: 4px 12px; border-radius: 4px; font-weight: 600; margin-left: 12px;">AI Grid MVP</span></h1>
+                    <p style="color: #6a6e73; margin-bottom: 32px;">
+                        Review the model deployment configuration before saving to Git.
+                    </p>
+
+                    <div class="info-card">
+                        <h2>Deployment Summary</h2>
+                        <div class="info-grid" style="margin-top: 16px;">
+                            <div class="info-item">
+                                <label>Deployment Name</label>
+                                <value id="review-name">—</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Tenant</label>
+                                <value id="review-tenant">—</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Model</label>
+                                <value id="review-model">—</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Total Replicas</label>
+                                <value id="review-replicas">—</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Resource Profile</label>
+                                <value id="review-resources">—</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Deployment Locations</label>
+                                <value id="review-locations">—</value>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px; padding: 16px; background: #faeae8; border-radius: 8px; border-left: 4px solid #c9190b;">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">⚠️ Important</div>
+                        <div style="font-size: 14px; color: #151515; line-height: 1.5;">
+                            This will create GitOps manifests and trigger ACM distribution. Ensure your subscription has sufficient quota for the requested replicas.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wizard Actions -->
+                <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid #d2d2d2; display: flex; justify-content: space-between;">
+                    <button class="pf-v5-c-button pf-m-secondary" onclick="location.href='ai-grid-models.html'">
+                        Cancel
+                    </button>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="pf-v5-c-button pf-m-secondary" id="btn-back" onclick="previousStep()" style="display: none;">
+                            Back
+                        </button>
+                        <button class="pf-v5-c-button pf-m-primary" id="btn-next" onclick="nextStep()">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="common.js"></script>
+    <script>
+        let currentStep = 1;
+
+        function nextStep() {
+            if (currentStep < 4) {
+                // Mark current step as completed
+                document.getElementById(`step-${currentStep}`).classList.add('completed');
+                document.getElementById(`step-${currentStep}`).classList.remove('active');
+                document.getElementById(`wizard-step-${currentStep}`).style.display = 'none';
+
+                currentStep++;
+
+                // Show next step
+                document.getElementById(`step-${currentStep}`).classList.add('active');
+                document.getElementById(`wizard-step-${currentStep}`).style.display = 'block';
+                document.getElementById('btn-back').style.display = 'block';
+
+                if (currentStep === 4) {
+                    // Populate review
+                    populateReview();
+                    document.getElementById('btn-next').textContent = 'Deploy Model';
+                }
+            } else {
+                // Deploy
+                deployModel();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                document.getElementById(`step-${currentStep}`).classList.remove('active');
+                document.getElementById(`wizard-step-${currentStep}`).style.display = 'none';
+
+                currentStep--;
+
+                document.getElementById(`step-${currentStep}`).classList.remove('completed');
+                document.getElementById(`step-${currentStep}`).classList.add('active');
+                document.getElementById(`wizard-step-${currentStep}`).style.display = 'block';
+
+                if (currentStep === 1) {
+                    document.getElementById('btn-back').style.display = 'none';
+                }
+
+                document.getElementById('btn-next').textContent = 'Next';
+            }
+        }
+
+        function populateReview() {
+            document.getElementById('review-name').textContent = document.getElementById('deployment-name').value || '—';
+            document.getElementById('review-tenant').textContent = document.getElementById('tenant-select').options[document.getElementById('tenant-select').selectedIndex].text;
+            document.getElementById('review-model').textContent = document.getElementById('model-select').value || '—';
+            document.getElementById('review-replicas').textContent = document.getElementById('replica-count').value;
+            document.getElementById('review-resources').textContent = document.getElementById('resource-profile').options[document.getElementById('resource-profile').selectedIndex].text;
+
+            const selectedLocations = Array.from(document.querySelectorAll('input[name="location"]:checked')).map(cb => cb.value);
+            document.getElementById('review-locations').textContent = selectedLocations.join(', ') || 'None selected';
+        }
+
+        function deployModel() {
+            const deploymentName = document.getElementById('deployment-name').value;
+
+            if (confirm(`Deploy model "${deploymentName}"?\n\nThis will:\n- Create GitOps manifests\n- Distribute to selected clusters via ACM\n- Begin model serving`)) {
+                alert(`✓ Model deployment "${deploymentName}" created successfully!\n\nACM is distributing the deployment to selected clusters. Monitor status in the Models page.`);
+                location.href = 'ai-grid-models.html';
+            }
+        }
+    </script>
+</body>
+</html>

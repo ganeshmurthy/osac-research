@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSAC - AI Grid Subscriptions</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@patternfly/patternfly@5.2.0/patternfly.min.css">
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+    <!-- Top Masthead -->
+    <header class="pf-v5-c-masthead">
+        <div class="pf-v5-c-masthead__main">
+            <div class="pf-v5-c-masthead__toggle">
+                <button class="pf-v5-c-button pf-m-plain" type="button" onclick="toggleSidebar()">
+                    <span>☰</span>
+                </button>
+            </div>
+            <a class="pf-v5-c-masthead__brand" href="index.html">
+                <span style="font-weight: 600; font-size: 18px; color: white;">OSAC Control Panel</span>
+            </a>
+        </div>
+        <div class="pf-v5-c-masthead__content">
+            <div class="user-info">
+                <span class="role-badge admin-badge">ADMIN</span>
+                <span class="username">admin@osac.cloud</span>
+                <a href="index.html" class="logout-link">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="pf-v5-c-page">
+        <!-- Sidebar Navigation -->
+        <aside class="pf-v5-c-page__sidebar" id="sidebar">
+            <div class="pf-v5-c-page__sidebar-body">
+                <nav class="pf-v5-c-nav">
+                    <ul class="pf-v5-c-nav__list">
+                        <li class="pf-v5-c-nav__item">
+                            <a href="admin.html" class="pf-v5-c-nav__link">📚 Catalog</a>
+                        </li>
+                        <li class="pf-v5-c-nav__section">
+                            <h2 class="pf-v5-c-nav__section-title">AI Grid</h2>
+                            <ul class="pf-v5-c-nav__list">
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="ai-grid-clusters.html" class="pf-v5-c-nav__link">🖥️ Grid Clusters</a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="ai-grid-models.html" class="pf-v5-c-nav__link">🤖 Models</a>
+                                </li>
+                                <li class="pf-v5-c-nav__item">
+                                    <a href="ai-grid-subscriptions.html" class="pf-v5-c-nav__link pf-m-current">📋 Subscriptions</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="pf-v5-c-nav__item">
+                            <a href="admin.html" class="pf-v5-c-nav__link">← Back to Admin</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="pf-v5-c-page__main">
+            <div class="content-area">
+                <div class="page-header">
+                    <div>
+                        <h1>Subscriptions <span style="background: #c9190b; color: white; font-size: 14px; padding: 4px 12px; border-radius: 4px; font-weight: 600; margin-left: 12px;">AI Grid MVP</span></h1>
+                        <p style="color: #6a6e73; font-size: 16px; margin-top: 8px;">
+                            Manage subscriptions to models available through Models as a Service (MaaS).
+                        </p>
+                    </div>
+                    <button class="pf-v5-c-button pf-m-primary" onclick="alert('Create subscription wizard would open')">
+                        Create Subscription
+                    </button>
+                </div>
+
+                <!-- Search Toolbar -->
+                <div style="margin: 24px 0; padding: 16px; background: white; border: 1px solid #d2d2d2; border-radius: 4px; display: flex; gap: 12px;">
+                    <input type="text"
+                           id="subscription-search"
+                           placeholder="Filter subscriptions by name or model"
+                           style="padding: 8px 12px; border: 1px solid #d2d2d2; border-radius: 4px; flex: 1; max-width: 400px;"
+                           oninput="filterSubscriptions(this.value)">
+                    <select style="padding: 8px 12px; border: 1px solid #d2d2d2; border-radius: 4px;">
+                        <option value="">All Tenants</option>
+                        <option value="acme-corp">acme-corp</option>
+                        <option value="globex-inc">globex-inc</option>
+                        <option value="initech">initech</option>
+                        <option value="waynetech">waynetech</option>
+                    </select>
+                </div>
+
+                <!-- Subscriptions Table -->
+                <table class="pf-v5-c-table" id="subscriptions-table">
+                    <thead>
+                        <tr>
+                            <th>Subscription Name</th>
+                            <th>Tenant</th>
+                            <th>Model</th>
+                            <th>Plan</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Usage (30d)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-subscription="acme-llama-enterprise">
+                            <td>
+                                <strong>acme-llama-enterprise</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">Enterprise LLaMA subscription</div>
+                            </td>
+                            <td>acme-corp</td>
+                            <td>meta-llama/llama-3-70b</td>
+                            <td>
+                                <span class="status-badge" style="background: #f4c145; color: #151515;">Enterprise</span>
+                            </td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>2026-09-15</td>
+                            <td>
+                                <div>287.5M tokens</div>
+                                <div style="font-size: 12px; color: #6a6e73;">$4,312.50</div>
+                            </td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="viewSubscription('acme-llama-enterprise')">View</button>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('Edit subscription')">Edit</button>
+                            </td>
+                        </tr>
+
+                        <tr data-subscription="globex-granite-code">
+                            <td>
+                                <strong>globex-granite-code</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">Code assistant subscription</div>
+                            </td>
+                            <td>globex-inc</td>
+                            <td>ibm/granite-code-34b</td>
+                            <td>
+                                <span class="status-badge" style="background: #06c; color: white;">Professional</span>
+                            </td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>2026-10-01</td>
+                            <td>
+                                <div>125.3M tokens</div>
+                                <div style="font-size: 12px; color: #6a6e73;">$1,253.00</div>
+                            </td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="viewSubscription('globex-granite-code')">View</button>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('Edit subscription')">Edit</button>
+                            </td>
+                        </tr>
+
+                        <tr data-subscription="acme-mistral-dev">
+                            <td>
+                                <strong>acme-mistral-dev</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">Development testing</div>
+                            </td>
+                            <td>acme-corp</td>
+                            <td>mistralai/mistral-7b-instruct</td>
+                            <td>
+                                <span class="status-badge" style="background: #8b8d8f; color: white;">Starter</span>
+                            </td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>2026-10-10</td>
+                            <td>
+                                <div>8.2M tokens</div>
+                                <div style="font-size: 12px; color: #6a6e73;">$41.00</div>
+                            </td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="viewSubscription('acme-mistral-dev')">View</button>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('Edit subscription')">Edit</button>
+                            </td>
+                        </tr>
+
+                        <tr data-subscription="wayne-whisper-transcribe">
+                            <td>
+                                <strong>wayne-whisper-transcribe</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">Audio transcription service</div>
+                            </td>
+                            <td>waynetech</td>
+                            <td>openai/whisper-large-v3</td>
+                            <td>
+                                <span class="status-badge" style="background: #06c; color: white;">Professional</span>
+                            </td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>2026-09-20</td>
+                            <td>
+                                <div>45.6 hours</div>
+                                <div style="font-size: 12px; color: #6a6e73;">$912.00</div>
+                            </td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="viewSubscription('wayne-whisper-transcribe')">View</button>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('Edit subscription')">Edit</button>
+                            </td>
+                        </tr>
+
+                        <tr data-subscription="globex-embeddings">
+                            <td>
+                                <strong>globex-embeddings</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">Vector embedding service</div>
+                            </td>
+                            <td>globex-inc</td>
+                            <td>sentence-transformers/all-mpnet-base-v2</td>
+                            <td>
+                                <span class="status-badge" style="background: #8b8d8f; color: white;">Starter</span>
+                            </td>
+                            <td><span class="status-badge" style="background: #f4c145; color: #151515;">Trial</span></td>
+                            <td>2026-10-14</td>
+                            <td>
+                                <div>2.1M embeddings</div>
+                                <div style="font-size: 12px; color: #6a6e73;">$0.00 (trial)</div>
+                            </td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="viewSubscription('globex-embeddings')">View</button>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('Upgrade to paid')">Upgrade</button>
+                            </td>
+                        </tr>
+
+                        <tr data-subscription="initech-llm-expired" style="opacity: 0.6;">
+                            <td>
+                                <strong>initech-llm-expired</strong>
+                                <div style="font-size: 13px; color: #6a6e73;">Expired subscription</div>
+                            </td>
+                            <td>initech</td>
+                            <td>meta-llama/llama-2-13b</td>
+                            <td>
+                                <span class="status-badge" style="background: #8b8d8f; color: white;">Starter</span>
+                            </td>
+                            <td><span class="status-badge" style="background: #c9190b; color: white;">Expired</span></td>
+                            <td>2026-08-01</td>
+                            <td>
+                                <div>—</div>
+                            </td>
+                            <td>
+                                <button class="pf-v5-c-button pf-m-link" onclick="alert('Renew subscription')">Renew</button>
+                                <button class="pf-v5-c-button pf-m-link" onclick="confirmDelete('initech-llm-expired')">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Summary Cards -->
+                <div style="margin-top: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                    <div class="info-card">
+                        <div style="font-size: 14px; color: #6a6e73; margin-bottom: 4px;">Total Subscriptions</div>
+                        <div style="font-size: 28px; font-weight: 600;">6</div>
+                        <div style="font-size: 13px; color: #6a6e73; margin-top: 4px;">Across 4 tenants</div>
+                    </div>
+                    <div class="info-card">
+                        <div style="font-size: 14px; color: #6a6e73; margin-bottom: 4px;">Active Subscriptions</div>
+                        <div style="font-size: 28px; font-weight: 600; color: #3e8635;">5</div>
+                        <div style="font-size: 13px; color: #6a6e73; margin-top: 4px;">Currently serving</div>
+                    </div>
+                    <div class="info-card">
+                        <div style="font-size: 14px; color: #6a6e73; margin-bottom: 4px;">Monthly Usage (30d)</div>
+                        <div style="font-size: 28px; font-weight: 600; color: #06c;">$6,518</div>
+                        <div style="font-size: 13px; color: #6a6e73; margin-top: 4px;">+15% vs. last month</div>
+                    </div>
+                    <div class="info-card">
+                        <div style="font-size: 14px; color: #6a6e73; margin-bottom: 4px;">Trial Subscriptions</div>
+                        <div style="font-size: 28px; font-weight: 600; color: #f4c145;">1</div>
+                        <div style="font-size: 13px; color: #6a6e73; margin-top: 4px;">Eligible for upgrade</div>
+                    </div>
+                </div>
+
+                <!-- Info Banner -->
+                <div style="margin-top: 32px; padding: 16px; background: #e7f1fa; border-radius: 8px; border-left: 4px solid #06c;">
+                    <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">ℹ️ Subscription Plans</div>
+                    <div style="font-size: 14px; color: #151515; line-height: 1.5;">
+                        <strong>Starter:</strong> Pay-as-you-go, up to 100M tokens/month<br>
+                        <strong>Professional:</strong> Fixed monthly rate, up to 500M tokens/month<br>
+                        <strong>Enterprise:</strong> Unlimited tokens, dedicated support, SLA guarantees
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="common.js"></script>
+    <script>
+        function viewSubscription(subscriptionId) {
+            alert(`View subscription details for: ${subscriptionId}\n\nShowing:\n- Usage graphs\n- Cost breakdown\n- API endpoints\n- Rate limits\n- Model deployments using this subscription`);
+        }
+
+        function confirmDelete(subscriptionName) {
+            if (confirm(`Delete subscription "${subscriptionName}"?\n\nThis will:\n- Stop all model deployments using this subscription\n- Cancel recurring billing\n- Remove access credentials\n\nThis action cannot be undone.`)) {
+                const row = event.target.closest('tr');
+                row.style.opacity = '0.3';
+                event.target.textContent = 'Deleting...';
+                event.target.disabled = true;
+
+                setTimeout(() => {
+                    row.remove();
+                    alert(`✓ Subscription "${subscriptionName}" deleted successfully.`);
+                }, 1000);
+            }
+        }
+
+        function filterSubscriptions(searchTerm) {
+            const rows = document.querySelectorAll('#subscriptions-table tbody tr[data-subscription]');
+            const term = searchTerm.toLowerCase();
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = (term === '' || text.includes(term)) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
