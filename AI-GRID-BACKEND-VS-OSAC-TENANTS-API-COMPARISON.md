@@ -1,12 +1,19 @@
 # AI Grid Backend vs OSAC Tenants API — Field-by-Field Comparison
 
-**Purpose:** Compare the Tenant gRPC/REST APIs, message fields, resource types,
-and runtime behavior in AI Grid Provider Backend and OSAC Fulfillment.
+**Purpose:** Compare the Tenant gRPC/REST APIs, Protobuf request/response
+messages, resource fields, and runtime behavior in AI Grid Provider Backend and
+OSAC Fulfillment.
 
-**Scope:** The AI Grid `ai_grid.v1.Tenants` service and the OSAC public
-`osac.public.v1.Tenants` service. OSAC's private `osac.private.v1.Tenants`
-service is included where it is necessary to explain actual Tenant lifecycle
-operations and private-only fields.
+**Scope:** AI Grid `ai_grid.v1.Tenants` on branch `pr-27` and OSAC public
+`osac.public.v1.Tenants` on branch `main`. OSAC's private
+`osac.private.v1.Tenants` is included to explain private-only operations and
+lifecycle fields. Revisions checked: AI Grid `f5c124d`; OSAC `2753cc412`.
+
+**Strict comparison rule:** An API/message is an exact match only when its
+fully qualified name and each field's number, name, presence/cardinality,
+scalar or fully qualified message type, and validation options match. Similar
+simple names or field layouts are reported as partial matches, not as equivalent
+contracts.
 
 **Sources checked:**
 
@@ -25,24 +32,24 @@ proto contracts.
 
 ## Executive Summary
 
-| Aspect | AI Grid Backend | OSAC | Match? |
-|---|---|---|---|
-| Service | `ai_grid.v1.Tenants` | `osac.public.v1.Tenants` (public), `osac.private.v1.Tenants` (private) | ❌ Different service identities |
-| Standard RPCs in proto | List, Get, Create, Update, Delete | List, Get, Create, Update, Delete | ✅ Same names |
-| Public CRUD implementation | All five standard CRUD methods implemented | Public List/Get implemented; public Create/Update/Delete return `UNIMPLEMENTED` | ❌ Different behavior |
-| Additional RPC | `ListMembers` | Private-only `Signal`; no Tenants `ListMembers` | ❌ Different |
-| REST prefix | `/api/v1/tenants` | `/api/fulfillment/v1/tenants` public; `/api/private/v1/tenants` private | ❌ Different |
-| Tenant ID | Keycloak Organization UUID | OSAC Tenant ID; private Create sets it to `metadata.name` | ❌ Different identity |
-| Top-level public resource | `id`, `metadata`, `spec`, `status` | `id`, `metadata`, `spec`; status is private | ❌ Different shape |
-| Spec | `domains` | `domains`, `break_glass_credentials_secret` | 🟡 Partial overlap |
-| Status | Empty `TenantStatus` | Rich private lifecycle status, omitted from public API | ❌ Different |
-| Backing model | Direct Keycloak Organization CRUD | Persisted OSAC Tenant plus asynchronous lifecycle reconciliation | ❌ Different |
+| Aspect | Summary |
+|---|---|
+| Service | AI `ai_grid.v1.Tenants`; OSAC `osac.public.v1.Tenants` |
+| CRUD | Same five simple method names; service FQNs differ |
+| Public writes | AI Grid implements CRUD; OSAC public writes return `UNIMPLEMENTED` |
+| Messages | Shared CRUD names match; package/nested type FQNs differ |
+| Extra RPC | OSAC private `Signal`; no AI Grid equivalent |
+| Tenant ID | Keycloak Organization UUID vs OSAC Tenant ID/name |
+| Public Tenant | AI Grid has `status`; OSAC public omits it |
+| Spec/status | Domains overlap; OSAC adds a Secret ref and private status |
+| Backing | Direct Keycloak CRUD vs persisted OSAC resource + reconciliation |
 
 **Critical distinction:** AI Grid's Tenant is a direct projection and CRUD
 surface for a Keycloak Organization in a shared realm. OSAC's Tenant is an OSAC
 resource whose private lifecycle reconciles identity-provider state and other
-OSAC tenant concerns. Despite shared terminology and a `domains` field, the
-APIs are not drop-in compatible.
+OSAC tenant concerns. Under the strict rule above, shared method names and
+similar field layouts do **not** make the Protobuf APIs identical or drop-in
+compatible.
 
 ---
 
@@ -54,10 +61,9 @@ APIs are not drop-in compatible.
 4. [Metadata Field Comparison](#4-metadata-field-comparison)
 5. [TenantSpec Field Comparison](#5-tenantspec-field-comparison)
 6. [TenantStatus Field Comparison](#6-tenantstatus-field-comparison)
-7. [AI Grid ListMembers Field Comparison](#7-ai-grid-listmembers-field-comparison)
-8. [Runtime and Lifecycle Differences](#8-runtime-and-lifecycle-differences)
-9. [OSAC Tenant Lifecycle, Callers, and Keycloak Model](#9-osac-tenant-lifecycle-callers-and-keycloak-model)
-10. [Compatibility Summary and Integration Notes](#10-compatibility-summary-and-integration-notes)
+7. [Runtime and Lifecycle Differences](#7-runtime-and-lifecycle-differences)
+8. [OSAC Tenant Lifecycle, Callers, and Keycloak Model](#8-osac-tenant-lifecycle-callers-and-keycloak-model)
+9. [Compatibility Summary and Integration Notes](#9-compatibility-summary-and-integration-notes)
 
 ---
 
@@ -76,12 +82,10 @@ service Tenants {
   rpc Create(TenantsCreateRequest) returns (TenantsCreateResponse);
   rpc Update(TenantsUpdateRequest) returns (TenantsUpdateResponse);
   rpc Delete(TenantsDeleteRequest) returns (TenantsDeleteResponse);
-  rpc ListMembers(TenantsListMembersRequest) returns (TenantsListMembersResponse);
 }
 ```
 
-AI Grid implements the five CRUD methods against Keycloak Organizations and
-implements `ListMembers` as a read-only member projection.
+AI Grid implements the five CRUD methods against Keycloak Organizations.
 
 ### OSAC public API
 
@@ -93,9 +97,12 @@ package osac.public.v1;
 service Tenants {
   rpc List(TenantsListRequest) returns (TenantsListResponse);
   rpc Get(TenantsGetRequest) returns (TenantsGetResponse);
-  rpc Create(TenantsCreateRequest) returns (TenantsCreateResponse); ## Returns UNIMPLEMENTED
-  rpc Delete(TenantsDeleteRequest) returns (TenantsDeleteResponse); ## Returns UNIMPLEMENTED
-  rpc Update(TenantsUpdateRequest) returns (TenantsUpdateResponse); ## Returns UNIMPLEMENTED
+  // Declared in the public proto; the current public handler returns UNIMPLEMENTED.
+  rpc Create(TenantsCreateRequest) returns (TenantsCreateResponse);
+  // Declared in the public proto; the current public handler returns UNIMPLEMENTED.
+  rpc Delete(TenantsDeleteRequest) returns (TenantsDeleteResponse);
+  // Declared in the public proto; the current public handler returns UNIMPLEMENTED.
+  rpc Update(TenantsUpdateRequest) returns (TenantsUpdateResponse);
 }
 ```
 
@@ -113,14 +120,18 @@ a private gRPC method and has no HTTP route in the proto.
 
 #### OSAC private Tenants RPC inventory
 
-| gRPC method | Request → response | HTTP mapping in the private proto | Purpose / implementation |
-|---|---|---|---|
-| `osac.private.v1.Tenants/List` | `TenantsListRequest` → `TenantsListResponse` | `GET /api/private/v1/tenants` | Lists persisted Tenants, including private status fields. |
-| `osac.private.v1.Tenants/Get` | `TenantsGetRequest` → `TenantsGetResponse` | `GET /api/private/v1/tenants/{id}` | Retrieves one persisted Tenant by ID. |
-| `osac.private.v1.Tenants/Create` | `TenantsCreateRequest` → `TenantsCreateResponse` | `POST /api/private/v1/tenants` | Creates the OSAC Tenant; may return break-glass credentials once. |
-| `osac.private.v1.Tenants/Update` | `TenantsUpdateRequest` → `TenantsUpdateResponse` | `PATCH /api/private/v1/tenants/{object.id}` | Applies a field mask; supports optimistic locking with `lock=true`. |
-| `osac.private.v1.Tenants/Delete` | `TenantsDeleteRequest` → `TenantsDeleteResponse` | `DELETE /api/private/v1/tenants/{id}` | Starts Tenant deletion and its asynchronous cleanup. |
-| `osac.private.v1.Tenants/Signal` | `TenantsSignalRequest` → `TenantsSignalResponse` | None; gRPC only | Signals that the Tenant may need reconciliation. |
+| Private RPC | Request → response; purpose |
+|---|---|
+| `List` | `TenantsListRequest` → `TenantsListResponse`; list Tenants |
+| `Get` | `TenantsGetRequest` → `TenantsGetResponse`; get by ID |
+| `Create` | `TenantsCreateRequest` → `TenantsCreateResponse`; create Tenant |
+| `Update` | `TenantsUpdateRequest` → `TenantsUpdateResponse`; masked update |
+| `Delete` | `TenantsDeleteRequest` → `TenantsDeleteResponse`; start cleanup |
+| `Signal` | `TenantsSignalRequest` → `TenantsSignalResponse`; trigger reconcile |
+
+The HTTP annotations map List/Get/Create/Update/Delete under
+`/api/private/v1/tenants`; Get/Delete use `{id}`, and Update uses
+`{object.id}`. `Signal` has no HTTP mapping.
 
 All six methods are implemented on the private service. The public service
 shares the five CRUD declarations, but its current server implements only
@@ -128,18 +139,19 @@ List/Get; its Create/Update/Delete methods return `UNIMPLEMENTED`.
 
 ### Service comparison summary
 
-| Aspect | AI Grid | OSAC public | OSAC private |
-|---|---|---|---|
-| Protobuf package | `ai_grid.v1` | `osac.public.v1` | `osac.private.v1` |
-| Service name | `Tenants` | `Tenants` | `Tenants` |
-| CRUD RPCs declared | 5 | 5 | 5 |
-| CRUD RPCs implemented | 5 | List/Get only | 5 |
-| Other RPCs | `ListMembers` | None | `Signal` |
-| HTTP collection | `/api/v1/tenants` | `/api/fulfillment/v1/tenants` | `/api/private/v1/tenants` |
+| Property | AI Grid | OSAC |
+|---|---|---|
+| Package | `ai_grid.v1` | Public `osac.public.v1`; private `osac.private.v1` |
+| CRUD declared | 5 | 5 per service |
+| CRUD implemented | 5 | Public: List/Get; private: all 5 |
+| Extra private RPC | — | `Signal` |
+| Route prefix | `/api/v1` | Public `/api/fulfillment/v1`; private `/api/private/v1` |
 
-The service names are textually the same, but fully qualified gRPC names differ.
-The OSAC public proto's declaration of Create/Update/Delete should not be
-mistaken for runtime support.
+The service and method simple names match for the five CRUD methods, but the
+fully qualified service names differ: `ai_grid.v1.Tenants` versus
+`osac.public.v1.Tenants`. Consequently, none of their fully qualified gRPC
+method names are identical. The OSAC public proto's declaration of
+Create/Update/Delete should not be mistaken for runtime support.
 
 ---
 
@@ -147,45 +159,50 @@ mistaken for runtime support.
 
 ### `TenantsListRequest`
 
-| Field | AI Grid | OSAC public | Comparison |
-|---|---|---|---|
-| `offset` = 1 | `optional int32` | `optional int32` | ✅ Same field/type |
-| `limit` = 2 | `optional int32` | `optional int32` | ✅ Same field/type |
-| `filter` = 3 | `optional string`; CEL not evaluated | `optional string`; CEL filter documented | 🟡 Same type, different support |
-| `order` = 4 | `optional string`; not evaluated | `optional string`; ordering documented | 🟡 Same type, different support |
+| Field | AI Grid | OSAC public |
+|---|---|---|
+| `offset` #1 | optional int32 | optional int32 |
+| `limit` #2 | optional int32 | optional int32 |
+| `filter` #3 | optional string; ignored | optional string; CEL |
+| `order` #4 | optional string; ignored | optional string; ordering |
 
+At the field-descriptor level, `offset`, `limit`, `filter`, and `order` have
+matching numbers, names, types, and optional presence. The containing request
+messages still differ in fully qualified name because their packages differ.
 AI Grid's List handler applies offset and limit but currently ignores filter and
 order. OSAC forwards these values to its generic server for filtering and
 ordering (subject to the supported CEL/filter rules).
 
 ### `TenantsListResponse`
 
-| Field | AI Grid | OSAC public | Comparison |
-|---|---|---|---|
-| `size` = 1 | `int32` | `int32` | ✅ Same |
-| `total` = 2 | `int32` | `int32` | ✅ Same |
-| `items` = 3 | `repeated ai_grid.v1.Tenant` | `repeated osac.public.v1.Tenant` | 🟡 Same pattern, different type and shape |
+| Field | AI Grid | OSAC public |
+|---|---|---|
+| `size` #1 | int32 | int32 |
+| `total` #2 | int32 | int32 |
+| `items` #3 | repeated `ai_grid.v1.Tenant` | repeated `osac.public.v1.Tenant` |
 
-Both use `size`/`total`/`items`; the item resources differ, and OSAC public
-Tenant omits status.
+Fields `size` and `total` match by number/name/type. The `items` field has the
+same number/name/repeated cardinality, but its element message type differs:
+`ai_grid.v1.Tenant` versus `osac.public.v1.Tenant`. The response message FQNs
+also differ, and OSAC public Tenant omits status.
 
 ### `TenantsGetRequest`
 
-| Field | AI Grid | OSAC public | Comparison |
-|---|---|---|---|
-| `id` = 1 | `string`; Keycloak Organization ID/UUID | `string`; OSAC Tenant resource ID | 🟡 Same wire field, different identity meaning |
+| Field | AI Grid | OSAC public |
+|---|---|---|
+| `id` #1 | string; Keycloak UUID | string; OSAC Tenant ID |
 
 ### `TenantsGetResponse`
 
-| Field | AI Grid | OSAC public | Comparison |
-|---|---|---|---|
-| `object` = 1 | `ai_grid.v1.Tenant` | `osac.public.v1.Tenant` | 🟡 Same wrapper, different resource |
+| Field | AI Grid | OSAC public |
+|---|---|---|
+| `object` #1 | `ai_grid.v1.Tenant` | `osac.public.v1.Tenant` |
 
 ### `TenantsCreateRequest`
 
-| Field | AI Grid | OSAC public | Comparison |
-|---|---|---|---|
-| `object` = 1 | `ai_grid.v1.Tenant` | `osac.public.v1.Tenant` | 🟡 Same wrapper, different fields and create semantics |
+| Field | AI Grid | OSAC public |
+|---|---|---|
+| `object` #1 | `ai_grid.v1.Tenant` | `osac.public.v1.Tenant` |
 
 AI Grid Create is implemented and creates a Keycloak Organization. OSAC public
 Create is declared in the proto but currently returns `UNIMPLEMENTED`; OSAC
@@ -193,9 +210,9 @@ private Create is implemented against the persisted OSAC Tenant resource.
 
 ### `TenantsCreateResponse`
 
-| Field | AI Grid | OSAC public | Comparison |
-|---|---|---|---|
-| `object` = 1 | `ai_grid.v1.Tenant` | `osac.public.v1.Tenant` | 🟡 Same wrapper, different resource |
+| Field | AI Grid | OSAC public |
+|---|---|---|
+| `object` #1 | `ai_grid.v1.Tenant` | `osac.public.v1.Tenant` |
 
 The OSAC private Create response can include private Tenant status, including
 create-time break-glass credentials. That private status is filtered out of the
@@ -204,11 +221,11 @@ server.
 
 ### `TenantsUpdateRequest`
 
-| Field | AI Grid | OSAC public/private | Comparison |
-|---|---|---|---|
-| `object` = 1 | `ai_grid.v1.Tenant` | corresponding OSAC Tenant type | 🟡 Different resource types |
-| `update_mask` = 2 | `google.protobuf.FieldMask` | `google.protobuf.FieldMask` | ✅ Same type and field number |
-| `lock` = 3 | `bool`; documented and implemented as not enforced | `bool`; OSAC private generic server checks versions when true | 🟡 Same field, different behavior |
+| Field | AI Grid | OSAC public/private |
+|---|---|---|
+| `object` #1 | `ai_grid.v1.Tenant` | OSAC Tenant type; FQN differs |
+| `update_mask` #2 | `google.protobuf.FieldMask` | `google.protobuf.FieldMask` |
+| `lock` #3 | bool; not enforced | bool; private handler enforces when true |
 
 AI Grid's handler selects supported name/domain paths from the field mask. It
 does not enforce optimistic locking or compare `metadata.version`. OSAC private
@@ -217,15 +234,15 @@ Update applies the mask to a stored Tenant and performs its version check when
 
 ### `TenantsUpdateResponse`
 
-| Field | AI Grid | OSAC public | Comparison |
-|---|---|---|---|
-| `object` = 1 | `ai_grid.v1.Tenant` | `osac.public.v1.Tenant` | 🟡 Same wrapper, different resource |
+| Field | AI Grid | OSAC public |
+|---|---|---|
+| `object` #1 | `ai_grid.v1.Tenant` | `osac.public.v1.Tenant` |
 
 ### `TenantsDeleteRequest`
 
-| Field | AI Grid | OSAC public | Comparison |
-|---|---|---|---|
-| `id` = 1 | `string`; Keycloak Organization UUID | `string`; OSAC Tenant ID | 🟡 Same field/type, different identity and deletion target |
+| Field | AI Grid | OSAC public |
+|---|---|---|
+| `id` #1 | string; Keycloak UUID | string; OSAC Tenant ID |
 
 ### `TenantsDeleteResponse`
 
@@ -235,9 +252,35 @@ Both define an empty response message:
 message TenantsDeleteResponse {}
 ```
 
-The message shapes match. Behavior does not: AI Grid directly deletes the
+Both messages have the same empty field set, but their fully qualified message
+names differ by package. Behavior also differs: AI Grid directly deletes the
 Keycloak Organization; OSAC public Delete is unimplemented and OSAC private
 Delete initiates OSAC cleanup and reconciliation.
+
+---
+
+### Strict request/response message identity verdict
+
+The request/response **simple names** match for the shared CRUD methods, but
+the fully qualified message names differ because the packages differ. Fields
+that contain a `Tenant` also use different fully qualified nested types.
+
+| Message | Strict result |
+|---|---|
+| `TenantsListRequest` | Fields 1–4 match; FQN differs; filter/order semantics differ |
+| `TenantsListResponse` | `size`/`total` match; `items` Tenant FQN differs |
+| `TenantsGetRequest` | `id:string` field matches; message FQN and ID meaning differ |
+| `TenantsGetResponse` | `object` Tenant FQN differs |
+| `TenantsCreateRequest` | `object` Tenant FQN differs |
+| `TenantsCreateResponse` | `object` Tenant FQN differs |
+| `TenantsUpdateRequest` | `object` Tenant FQN differs; FieldMask/bool fields match |
+| `TenantsUpdateResponse` | `object` Tenant FQN differs |
+| `TenantsDeleteRequest` | `id:string` field matches; message FQN and ID meaning differ |
+| `TenantsDeleteResponse` | Both empty; message FQN differs |
+
+**Strict result:** No shared request/response message is an exact Protobuf type
+match. Even where individual scalar field descriptors match,
+package-qualified message names or nested resource message types differ.
 
 ---
 
@@ -273,16 +316,18 @@ private and omitted from the generated public type.
 
 ### Top-level field-by-field comparison
 
-| Field | AI Grid | OSAC public | Match? |
-|---|---|---|---|
-| `id` = 1 | `string`; Keycloak Organization UUID | `string`; OSAC resource ID (private Create sets it to the name) | ❌ Meaning differs |
-| `metadata` = 2 | `ai_grid.v1.Metadata` | `osac.public.v1.Metadata` | 🟡 Same common fields, OSAC adds fields |
-| `spec` = 3 | `ai_grid.v1.TenantSpec` | `osac.public.v1.TenantSpec` | 🟡 `domains` overlaps; OSAC has another field |
-| `status` = 4 | `ai_grid.v1.TenantStatus`, empty message | Not in public type; private type has private `osac.private.v1.TenantStatus` | ❌ Public shape differs |
+| Field | AI Grid | OSAC public |
+|---|---|---|
+| `id` #1 | string; Keycloak UUID | string; OSAC Tenant ID |
+| `metadata` #2 | `ai_grid.v1.Metadata` | `osac.public.v1.Metadata` |
+| `spec` #3 | `ai_grid.v1.TenantSpec` | `osac.public.v1.TenantSpec` |
+| `status` #4 | Empty `ai_grid.v1.TenantStatus` | Absent from public Tenant |
 
-The familiar `id`/`metadata`/`spec` shape does not make the message definitions
-interchangeable. In particular, AI Grid ID is assigned by Keycloak, while OSAC
-uses its own tenant identifier and lifecycle resource.
+Only the scalar `id` field matches as a field descriptor. `metadata` and `spec`
+reference different package-qualified messages; AI Grid also has a public `status`
+field that OSAC's public Tenant omits. The Tenant message definitions are not an
+exact match. AI Grid IDs are Keycloak Organization UUIDs; OSAC uses its own Tenant
+identifier and lifecycle resource.
 
 ---
 
@@ -293,32 +338,35 @@ AI Grid uses `ai_grid.v1.Metadata`; OSAC public uses
 
 ### Common fields
 
-| Field number | Field | AI Grid type | OSAC public type | Match? |
-|---:|---|---|---|---|
-| 1 | `creation_timestamp` | `google.protobuf.Timestamp` | `google.protobuf.Timestamp` | ✅ |
-| 2 | `deletion_timestamp` | `google.protobuf.Timestamp` | `google.protobuf.Timestamp` | ✅ |
-| 3 | `creator` | `string` | `string` | ✅ |
-| 4 | `tenant` | `string` | `string` | ✅ |
-| 5 | `name` | `string` | `string` | ✅ Same type/number; same RFC 1123 rule |
-| 6 | `labels` | `map<string, string>` | `map<string, string>` | ✅ |
-| 7 | `annotations` | `map<string, string>` | `map<string, string>` | ✅ |
-| 8 | `version` | `int32` | `int32` | ✅ |
+| Field # | Field name and shared type |
+|---:|---|
+| 1 | `creation_timestamp`: `google.protobuf.Timestamp` |
+| 2 | `deletion_timestamp`: `google.protobuf.Timestamp` |
+| 3 | `creator`: `string` |
+| 4 | `tenant`: `string` |
+| 5 | `name`: `string` |
+| 6 | `labels`: `map<string, string>` |
+| 7 | `annotations`: `map<string, string>` |
+| 8 | `version`: `int32` |
 
 ### OSAC-only public metadata fields
 
-| Field number | Field | Type | AI Grid equivalent? |
-|---:|---|---|---|
-| 9 | `project` | `string` | ❌ None |
-| 10 | `display_name` | `string` | ❌ None |
-| 11 | `description` | `string` | ❌ None |
+| OSAC-only field # | Type |
+|---:|---|
+| 9 `project` | string |
+| 10 `display_name` | string |
+| 11 `description` | string |
 
 OSAC private Metadata also defines `finalizers` at field 12, marked private and
 not present in the public API. AI Grid Metadata has eight fields total.
 
-Although fields 1–8 match structurally, AI Grid's Organization mapper primarily
-populates `metadata.name`. OSAC uses Metadata as part of a persisted,
-tenant-scoped resource model. Matching definitions do not imply matching
-population or semantics for every field.
+Metadata fields 1–8 match by number, name, and Protobuf type, including the
+same `name` validation rule. The Metadata messages are nevertheless not exact
+matches: their fully qualified names differ, and OSAC adds fields 9–11. OSAC
+also documents and enforces reserved `admin.osac.openshift.io` label and
+annotation behavior on public Create/Update; AI Grid has no equivalent contract.
+At runtime, AI Grid's Organization mapper primarily populates `metadata.name`,
+while OSAC uses Metadata in its persisted tenant-scoped resource model.
 
 ---
 
@@ -343,10 +391,10 @@ message TenantSpec {
 
 ### Field-by-field comparison
 
-| Field | AI Grid | OSAC public | Match? |
-|---|---|---|---|
-| `domains` = 1 | `repeated string`; lowercase DNS hostnames | `repeated string`; lowercase DNS hostnames, with proto validation | 🟡 Same field/type, validation and lifecycle differ |
-| `break_glass_credentials_secret` = 2 | Not defined | `SecretLocalReference` | ❌ OSAC only |
+| Field | AI Grid | OSAC public |
+|---|---|---|
+| `domains` #1 | repeated string | repeated string; added validation options |
+| `break_glass_credentials_secret` #2 | absent | `SecretLocalReference` |
 
 #### `domains` behavior
 
@@ -358,8 +406,10 @@ message TenantSpec {
   lowercase valid labels, and no duplicates. The proto documentation also says
   domains are globally unique across tenants.
 
-The same field name/type does not mean the same validation mechanism or
-lifecycle. OSAC stores domains in the Tenant spec and reconciles them to the
+The `domains` fields match by number, name, repeated cardinality, and element
+type (`string`), but are not identical field contracts: OSAC adds Protovalidate
+options that AI Grid does not declare in the proto. Runtime validation also
+differs. OSAC stores domains in the Tenant spec and reconciles them to the
 identity provider; AI Grid directly maps them to a Keycloak Organization.
 
 #### OSAC `break_glass_credentials_secret`
@@ -384,66 +434,68 @@ has **zero status fields**.
 ### OSAC private `TenantStatus`
 
 OSAC private TenantStatus is private and omitted from the public Tenant API. It
-has six fields:
+has six fields. Its private `TenantConditionType` enum also includes the
+storage-onboarding condition at value 4, detailed below:
 
-| Field number | Field | Type | Description |
-|---:|---|---|---|
-| 1 | `break_glass_credentials` | `BreakGlassCredentials` | Private create-time credentials; not persisted in Tenant status and omitted by Get/List. |
-| 2 | `state` | `TenantState` enum | IDP lifecycle state. |
-| 3 | `message` | `optional string` | Human-readable progress/failure details. |
-| 4 | `idp_tenant_name` | `string` | Name of the tenant created in the IDP. |
-| 5 | `break_glass_user_id` | `string` | IDP user ID of the break-glass account. |
-| 6 | `conditions` | `repeated TenantCondition` | Detailed subsystem readiness. |
+| Field # | Type / meaning |
+|---|---|
+| 1 `break_glass_credentials` | `BreakGlassCredentials`; create-time only |
+| 2 `state` | `TenantState`; IDP lifecycle |
+| 3 `message` | optional string; progress/failure |
+| 4 `idp_tenant_name` | string |
+| 5 `break_glass_user_id` | string |
+| 6 `conditions` | repeated `TenantCondition` |
 
 ### OSAC `BreakGlassCredentials`
 
 This private message is nested in `TenantStatus`:
 
-| Field number | Field | Type |
-|---:|---|---|
-| 1 | `username` | `string` |
-| 2 | `password` | `string` (sensitive; returned only during account creation) |
+| Field # | Type |
+|---|---|
+| 1 `username` | string |
+| 2 `password` | string; sensitive, one-time response |
 
 The password is cleared from inline status after reconciliation persists a
 secret reference. The durable credentials live in the referenced Secret.
 
 ### OSAC `TenantState` enum
 
-| Number | Enum value | Meaning |
-|---:|---|---|
-| 0 | `TENANT_STATE_UNSPECIFIED` | Unknown or not initialized. |
-| 1 | `TENANT_STATE_PENDING` | Tenant is being synchronized to the IDP; not ready for users. |
-| 2 | `TENANT_STATE_SYNCED` | IDP tenant and break-glass account are synchronized. Does not imply compute readiness. |
-| 3 | `TENANT_STATE_FAILED` | IDP synchronization failed; status message explains the failure. |
+| Enum value | Meaning |
+|---|---|
+| 0 `TENANT_STATE_UNSPECIFIED` | Unknown/not initialized |
+| 1 `TENANT_STATE_PENDING` | IDP synchronization in progress |
+| 2 `TENANT_STATE_SYNCED` | IDP synchronized; compute may still be pending |
+| 3 `TENANT_STATE_FAILED` | IDP synchronization failed |
 
 AI Grid defines no equivalent Tenant lifecycle enum or status field.
 
 ### OSAC `TenantCondition` fields
 
-| Field number | Field | Type |
-|---:|---|---|
-| 1 | `type` | `TenantConditionType` |
-| 2 | `status` | `ConditionStatus` |
-| 3 | `last_transition_time` | `google.protobuf.Timestamp` |
-| 4 | `reason` | `optional string` |
-| 5 | `message` | `optional string` |
+| Condition field # | Type |
+|---|---|
+| 1 `type` | `TenantConditionType` |
+| 2 `status` | `ConditionStatus` |
+| 3 `last_transition_time` | `google.protobuf.Timestamp` |
+| 4 `reason` | optional string |
+| 5 `message` | optional string |
 
 ### OSAC `TenantConditionType` enum
 
-| Number | Enum value | Readiness represented |
-|---:|---|---|
-| 0 | `TENANT_CONDITION_TYPE_UNSPECIFIED` | Unspecified condition. |
-| 1 | `TENANT_CONDITION_TYPE_DEFAULT_NETWORKING_READY` | Default virtual network, subnets, security group, and NAT gateway readiness. |
-| 2 | `TENANT_CONDITION_TYPE_VAULT_READY` | Tenant Vault namespace readiness. |
-| 3 | `TENANT_CONDITION_TYPE_COMPUTE_INFRASTRUCTURE_READY` | Compute infrastructure readiness across known hubs. |
+| Enum value | Meaning |
+|---|---|
+| 0 `TENANT_CONDITION_TYPE_UNSPECIFIED` | Unspecified |
+| 1 `TENANT_CONDITION_TYPE_DEFAULT_NETWORKING_READY` | Default network readiness |
+| 2 `TENANT_CONDITION_TYPE_VAULT_READY` | Vault namespace readiness |
+| 3 `TENANT_CONDITION_TYPE_COMPUTE_INFRASTRUCTURE_READY` | Compute readiness on hubs |
+| 4 `TENANT_CONDITION_TYPE_STORAGE_ONBOARDING_COMPLETE` | Initial storage onboarding milestone |
 
 ### OSAC `ConditionStatus` enum
 
-| Number | Enum value | Meaning |
-|---:|---|---|
-| 0 | `CONDITION_STATUS_UNSPECIFIED` | Status not specified. |
-| 1 | `CONDITION_STATUS_TRUE` | The condition is true. |
-| 2 | `CONDITION_STATUS_FALSE` | The condition is false. |
+| Enum value | Meaning |
+|---|---|
+| 0 `CONDITION_STATUS_UNSPECIFIED` | Not specified |
+| 1 `CONDITION_STATUS_TRUE` | Condition is true |
+| 2 `CONDITION_STATUS_FALSE` | Condition is false |
 
 None of these status fields or enums are exposed by OSAC's public Tenant type.
 AI Grid's empty `TenantStatus` is not a reduced equivalent of OSAC's private
@@ -451,45 +503,7 @@ status model.
 
 ---
 
-## 7. AI Grid `ListMembers` Field Comparison
-
-OSAC's Tenants service does not define a `ListMembers` RPC. AI Grid defines the
-following additional messages and method.
-
-### `TenantsListMembersRequest`
-
-| Field | AI Grid | OSAC Tenants equivalent? |
-|---|---|---|
-| `id` = 1 | `string`; Keycloak Organization ID | ❌ No matching RPC |
-| `offset` = 2 | `optional int32` | ❌ No matching RPC |
-| `limit` = 3 | `optional int32` | ❌ No matching RPC |
-
-### `TenantsListMembersResponse`
-
-| Field | AI Grid | OSAC Tenants equivalent? |
-|---|---|---|
-| `size` = 1 | `int32` | ❌ No matching RPC |
-| `total` = 2 | `int32` | ❌ No matching RPC |
-| `items` = 3 | `repeated TenantMember` | ❌ No matching RPC |
-
-### AI Grid `TenantMember`
-
-| Field number | Field | Type | Meaning |
-|---:|---|---|---|
-| 1 | `id` | `string` | Keycloak user UUID. |
-| 2 | `username` | `string` | Login username. |
-| 3 | `email` | `string` | Email, when present. |
-| 4 | `first_name` | `string` | Given name. |
-| 5 | `last_name` | `string` | Family name. |
-| 6 | `enabled` | `bool` | Whether the Keycloak user is enabled. |
-
-This is a read projection, not full user or membership management. The absence
-of a `ListMembers` RPC in OSAC's Tenants service does not imply that OSAC has no
-other user or identity-provider APIs.
-
----
-
-## 8. Runtime and Lifecycle Differences
+## 7. Runtime and Lifecycle Differences
 
 ### AI Grid behavior
 
@@ -502,8 +516,6 @@ other user or identity-provider APIs.
   update because it is immutable in this integration.
 - `lock` is declared but not enforced by the Tenant handler.
 - List offset/limit are applied; List filter/order are not currently evaluated.
-- ListMembers fetches the Organization's members and applies pagination to the
-  returned projection.
 - The AI Grid README states that API request authentication and authorization
   are out of scope for its current MVP; gRPC and REST endpoints are open.
 
@@ -527,7 +539,7 @@ other user or identity-provider APIs.
 
 ---
 
-## 9. OSAC Tenant Lifecycle, Callers, and Keycloak Model
+## 8. OSAC Tenant Lifecycle, Callers, and Keycloak Model
 
 ### Public and private API behavior
 
@@ -549,13 +561,13 @@ Tenant Admin is not thereby granted platform-wide Tenant administration.
 
 ### Who calls the private Tenant service?
 
-| Caller | Private Tenant methods used | Purpose |
-|---|---|---|
-| OSAC Admin UI | List, Create, Delete | Platform Tenant administration through the Connect proxy. |
-| Installer dev bootstrap scripts (`scripts/dev-full/provision-tenant.sh` and the devstack `provision-tenant.sh`) | Create | Create the demo Tenant during local setup. |
-| Fulfillment `tenant` and `onboarding` reconcilers | Update | Persist controller-owned status and finalizer changes; they call Fulfillment's private gRPC API. |
-| OSAC Operator `TenantFeedbackReconciler` | Signal | Tell Fulfillment that a hub Tenant CR changed; it does not perform Tenant CRUD. |
-| `osac tenant` CLI command | None for Tenant CRUD | Selects or displays the current Tenant; it does not create, update, or delete Tenants. |
+| Caller | Private Tenant methods |
+|---|---|
+| OSAC Admin UI | List, Create, Delete |
+| Installer dev bootstrap | Create |
+| Fulfillment reconcilers | Update status/finalizers |
+| OSAC Operator feedback | Signal |
+| `osac tenant` CLI | No Tenant CRUD |
 
 Tests also call the private API, but they are not runtime clients.
 
@@ -644,29 +656,33 @@ Administration → Tenants page.
 
 ---
 
-## 10. Compatibility Summary and Integration Notes
+## 9. Compatibility Summary and Integration Notes
 
 ### Compatibility by layer
 
-| Layer | Compatibility | Notes |
-|---|---|---|
-| CRUD names | Similar | Same standard operation names in the proto. |
-| Public CRUD availability | ❌ Different | AI Grid implements all standard CRUD; OSAC public only implements List/Get. |
-| List request fields | 🟡 Similar fields | Same field names/numbers/types; AI Grid ignores filter/order. |
-| List response | 🟡 Similar pattern | `size`, `total`, `items`; item types differ. |
-| Get/Delete IDs | 🟡 Same scalar shape | Both use string IDs, but identity namespaces differ. |
-| Top-level Tenant | ❌ Different | AI Grid public type has status field; OSAC public type does not. |
-| Metadata fields | 🟡 Partial match | First eight fields match; OSAC public adds project/display name/description. |
-| Spec fields | 🟡 Partial overlap | `domains` matches in shape; OSAC adds break-glass Secret reference. |
-| Status | ❌ Not equivalent | AI Grid status empty; OSAC status is private and lifecycle-rich. |
-| Members | ❌ AI Grid-only method | AI Grid exposes read-only `ListMembers`; no OSAC Tenants RPC equivalent. |
-| Tenant identity | ❌ Different | Keycloak UUID vs OSAC Tenant ID/name. |
-| Lifecycle | ❌ Different | Direct Organization CRUD vs persisted resource with reconciliation. |
-| Drop-in compatibility | ❌ No | Package, messages, IDs, supported methods, fields, auth, and semantics differ. |
+| Layer | Strict result |
+|---|---|
+| Service identity | ❌ Different package/FQN |
+| CRUD simple names | 🟡 Same names; different FQ RPC paths |
+| Request/response types | ❌ Package and nested Tenant FQNs differ |
+| List request fields | 🟡 Descriptors match; query behavior differs |
+| List response | ❌ Nested `items` type differs |
+| IDs | 🟡 Same string field; different identity |
+| Object messages | ❌ Nested Tenant FQNs differ |
+| Update | ❌ Object type/lock behavior differs |
+| Public Tenant | ❌ AI has status; OSAC public does not |
+| Metadata | 🟡 Fields 1–8 match; OSAC adds 9–11 |
+| TenantSpec | ❌ OSAC adds validation and Secret reference |
+| TenantStatus | ❌ Empty AI status vs private OSAC lifecycle status |
+| Private extension | OSAC has private `Signal` |
+| Runtime | ❌ Direct Organization CRUD vs OSAC reconciliation |
+| Exact API match | ❌ No |
 
-Avoid assigning a compatibility percentage. The shared resource name and CRUD
-pattern do not capture the public/private implementation gap or the identity
-and lifecycle differences.
+Avoid assigning a compatibility percentage. Under this strict comparison, a
+shared simple name or scalar field is not an exact match when its fully qualified
+message type, nested type, validation contract, or field descriptor differs.
+
+---
 
 ### Integration considerations
 
@@ -682,9 +698,7 @@ If these APIs need to work together, explicitly define:
    CRUD.
 5. **Lifecycle/status mapping:** Whether OSAC private lifecycle state needs a
    safe public projection for AI Grid consumers.
-6. **Member access:** Whether AI Grid's read-only `ListMembers` is required and
-   which authenticated service is permitted to call it.
-7. **Deletion:** Coordinate AI Grid's direct Organization deletion with OSAC's
+6. **Deletion:** Coordinate AI Grid's direct Organization deletion with OSAC's
    asynchronous cleanup and IDP lifecycle.
 
 **Recommendation:** Keep the APIs and resource models separate unless there is a
@@ -696,7 +710,7 @@ status visibility, and delete semantics before connecting their lifecycles.
 ## References
 
 - AI Grid Tenants service: `ai-grid-provider-backend/proto/ai_grid/v1/tenants_service.proto`
-- AI Grid Tenant and TenantMember types: `ai-grid-provider-backend/proto/ai_grid/v1/tenant_type.proto`
+- AI Grid Tenant type: `ai-grid-provider-backend/proto/ai_grid/v1/tenant_type.proto`
 - AI Grid Metadata: `ai-grid-provider-backend/proto/ai_grid/v1/metadata_type.proto`
 - AI Grid Tenant implementation: `ai-grid-provider-backend/internal/servers/tenants_server.go`
 - AI Grid Keycloak and auth scope: `ai-grid-provider-backend/README.md`
