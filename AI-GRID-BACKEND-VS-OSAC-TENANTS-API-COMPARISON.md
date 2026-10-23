@@ -56,7 +56,8 @@ APIs are not drop-in compatible.
 6. [TenantStatus Field Comparison](#6-tenantstatus-field-comparison)
 7. [AI Grid ListMembers Field Comparison](#7-ai-grid-listmembers-field-comparison)
 8. [Runtime and Lifecycle Differences](#8-runtime-and-lifecycle-differences)
-9. [Compatibility Summary and Integration Notes](#9-compatibility-summary-and-integration-notes)
+9. [OSAC Tenant Lifecycle, Callers, and Keycloak Model](#9-osac-tenant-lifecycle-callers-and-keycloak-model)
+10. [Compatibility Summary and Integration Notes](#10-compatibility-summary-and-integration-notes)
 
 ---
 
@@ -92,9 +93,9 @@ package osac.public.v1;
 service Tenants {
   rpc List(TenantsListRequest) returns (TenantsListResponse);
   rpc Get(TenantsGetRequest) returns (TenantsGetResponse);
-  rpc Create(TenantsCreateRequest) returns (TenantsCreateResponse);
-  rpc Delete(TenantsDeleteRequest) returns (TenantsDeleteResponse);
-  rpc Update(TenantsUpdateRequest) returns (TenantsUpdateResponse);
+  rpc Create(TenantsCreateRequest) returns (TenantsCreateResponse); ## Returns UNIMPLEMENTED
+  rpc Delete(TenantsDeleteRequest) returns (TenantsDeleteResponse); ## Returns UNIMPLEMENTED
+  rpc Update(TenantsUpdateRequest) returns (TenantsUpdateResponse); ## Returns UNIMPLEMENTED
 }
 ```
 
@@ -511,7 +512,124 @@ other user or identity-provider APIs.
 
 ---
 
-## 9. Compatibility Summary and Integration Notes
+## 9. OSAC Tenant Lifecycle, Callers, and Keycloak Model
+
+### Public and private API behavior
+
+The OSAC public Tenants proto declares List/Get/Create/Update/Delete, but the
+current public server implements List and Get only. Public Create, Update, and
+Delete return gRPC `UNIMPLEMENTED`. The private Tenants service implements the
+write operations used for platform administration and reconciliation.
+
+In the current implementation, the first-party Admin UI is one caller of that
+private service: its Tenant list uses `osac.private.v1.Tenants`, its create page
+calls private Create, and its action menu calls private Delete. The browser uses
+the UI's Connect transport/proxy; it does not connect directly to the backend
+gRPC listener. The current UI has no Tenant Update action.
+
+“Private” is an API-surface classification, **not a guarantee of network
+isolation or backend-only access**. Authentication and authorization still
+apply. The Admin UI is authorized to use these operations; an ordinary
+Tenant Admin is not thereby granted platform-wide Tenant administration.
+
+### Who calls the private Tenant service?
+
+| Caller | Private Tenant methods used | Purpose |
+|---|---|---|
+| OSAC Admin UI | List, Create, Delete | Platform Tenant administration through the Connect proxy. |
+| Installer dev bootstrap scripts (`scripts/dev-full/provision-tenant.sh` and the devstack `provision-tenant.sh`) | Create | Create the demo Tenant during local setup. |
+| Fulfillment `tenant` and `onboarding` reconcilers | Update | Persist controller-owned status and finalizer changes; they call Fulfillment's private gRPC API. |
+| OSAC Operator `TenantFeedbackReconciler` | Signal | Tell Fulfillment that a hub Tenant CR changed; it does not perform Tenant CRUD. |
+| `osac tenant` CLI command | None for Tenant CRUD | Selects or displays the current Tenant; it does not create, update, or delete Tenants. |
+
+Tests also call the private API, but they are not runtime clients.
+
+### Create and onboarding sequence
+
+A private `Tenants.Create` call begins the lifecycle; it does not wait for all
+onboarding work to finish:
+
+1. **Validate the request.** `metadata.name` is required. `id` must be empty or
+equal to the name; an empty ID is set to the name. `metadata.tenant` must be
+empty or equal to the name; an empty value is set to the name. Domains and any
+supplied `break_glass_credentials_secret` reference are validated.
+2. **Create the OSAC resource.** Fulfillment persists the Tenant record. If no
+break-glass Secret reference was supplied, private Create generates credentials
+and can return them once in the Create response. They are not available from
+later Get/List responses.
+3. **Start independent reconciliation paths.** The `tenant` and `onboarding`
+reconcilers add their cleanup finalizers before doing external work. Their
+progress is asynchronous and may overlap.
+4. **Synchronize identity and credentials.** The `tenant` reconciler initializes
+private status to `PENDING`, creates/synchronizes a Keycloak Organization with
+the Tenant's domains, and creates a break-glass account. It then ensures a Vault
+namespace when configured and stores durable credentials in an OSAC Secret. On
+successful IDP synchronization it records `SYNCED` and clears the transient
+inline password. If there is no supplied Secret reference, the system-generated
+credentials are persisted as a Secret and the reference is written back to the
+Tenant.
+5. **Prepare tenant infrastructure on hubs.** The onboarding reconciler creates
+or updates an OSAC Tenant custom resource and a tenant namespace on each
+configured hub. The operator watches hub Tenant CR changes and signals
+Fulfillment to refresh the authoritative Tenant status.
+6. **Reconcile ongoing readiness.** For a `SYNCED` Tenant, Fulfillment updates
+domain settings in the IDP, ensures Vault/default networking, and updates
+readiness conditions. Compute-infrastructure readiness is observed from hub
+Tenant CRs separately. `SYNCED` means IDP synchronization completed; it does
+not mean compute infrastructure is ready.
+
+The private `TenantStatus` contains lifecycle state, messages, IDP identity,
+and readiness conditions. The public Tenant type has no `status` field, so these
+internal lifecycle details are not visible through public Tenant List/Get.
+
+### Update and delete lifecycle
+
+**Update:** Private Update applies the field mask to the stored OSAC Tenant and
+supports optimistic locking when `lock=true`. A change to domains is later
+reconciled to the Keycloak Organization. Controller-owned status/finalizer
+updates also use this private Update API. Public Update currently returns
+`UNIMPLEMENTED`.
+
+**Delete:** Private Delete begins asynchronous deletion rather than simply
+deleting a Keycloak Organization in the request handler. Cleanup is coordinated
+by the lifecycle and onboarding finalizers:
+
+- The lifecycle reconciler removes break-glass Secrets and the auto-created
+  root project, waits for remaining projects to be deleted, removes the Vault
+  namespace when configured, deletes the Keycloak Organization, and then drops
+  its finalizer.
+- The onboarding reconciler removes hub Tenant CRs and tenant namespaces, waits
+  for Kubernetes finalizers and project archival, and then drops its finalizer.
+
+The OSAC Tenant is fully removed only after both cleanup paths complete. Public
+Delete currently returns `UNIMPLEMENTED`.
+
+### Keycloak realm, Organization, group, and IdentityProvider distinctions
+
+- The installer configures a shared Keycloak realm named `osac`; OSAC does not
+  create a separate realm for each Tenant.
+- Each OSAC Tenant is represented by a Keycloak **Organization** in that shared
+  realm. Many Organizations can exist in one realm.
+- A Keycloak **Group** is a different concept. The installer uses an `admins`
+  group for platform administrators; the UI maps membership in that group (or a
+  `cloud-provider-admin` role) to its `admin` role.
+- An OSAC **IdentityProvider** resource is tenant-scoped OIDC configuration. It
+  is separate from the Keycloak Organization created during Tenant onboarding;
+  creating an IdentityProvider is not a prerequisite for viewing or creating a
+  platform Tenant.
+
+The realm import defines the platform-admin user and the demo tenant users.
+Admin identity values are substituted from deployment-managed Keycloak
+credentials; demo-user passwords are set by a password-setup job from the
+`default-user-password` key in the `keycloak-admin-credentials` Secret. The
+actual values are deployment-specific and are intentionally not reproduced
+here. In the local dev fixtures, `tenant1_user` is a tenant user, not a Cloud
+Provider Admin, so that account does not see the platform-wide
+Administration → Tenants page.
+
+---
+
+## 10. Compatibility Summary and Integration Notes
 
 ### Compatibility by layer
 
@@ -574,3 +692,8 @@ status visibility, and delete semantics before connecting their lifecycles.
 - OSAC private Tenant server: `osac/fulfillment-service/internal/servers/private_tenants_server.go`
 - OSAC Tenant lifecycle controllers: `osac/fulfillment-service/internal/controllers/tenant/`, `onboarding/`
 - OSAC authentication and tenant mapping: `osac/fulfillment-service/docs/AUTH.md`
+- OSAC UI Tenant API usage: `osac-ui/libs/ui-components/src/components/Tenant/` and `osac-ui/docs/api-query-arch.md`
+- OSAC UI role mapping: `osac-ui/apps/app-frontend/src/hooks/oidc-login.tsx`, `shellNav.ts`
+- Installer Keycloak realm/password setup: `osac-installer/charts/osac-infra/files/realm.json`, `osac-installer/charts/osac-infra/templates/keycloak/resources.yaml`, and `osac-installer/charts/osac-infra/files/hooks/resolve-realm-secrets.sh`
+- Local Tenant bootstrap: `osac-installer/scripts/dev-full/provision-tenant.sh` and `charts/osac-devstack/files/provision-tenant.sh`
+- OSAC Operator Tenant feedback: `osac-operator/internal/controller/tenant_feedback_controller.go`
