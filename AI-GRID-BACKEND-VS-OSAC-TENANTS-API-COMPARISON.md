@@ -111,6 +111,21 @@ The private service has the CRUD operations and a private `Signal` RPC used to
 notify reconciliation. Its REST route prefix is `/api/private/v1/`. `Signal` is
 a private gRPC method and has no HTTP route in the proto.
 
+#### OSAC private Tenants RPC inventory
+
+| gRPC method | Request → response | HTTP mapping in the private proto | Purpose / implementation |
+|---|---|---|---|
+| `osac.private.v1.Tenants/List` | `TenantsListRequest` → `TenantsListResponse` | `GET /api/private/v1/tenants` | Lists persisted Tenants, including private status fields. |
+| `osac.private.v1.Tenants/Get` | `TenantsGetRequest` → `TenantsGetResponse` | `GET /api/private/v1/tenants/{id}` | Retrieves one persisted Tenant by ID. |
+| `osac.private.v1.Tenants/Create` | `TenantsCreateRequest` → `TenantsCreateResponse` | `POST /api/private/v1/tenants` | Creates the OSAC Tenant; may return break-glass credentials once. |
+| `osac.private.v1.Tenants/Update` | `TenantsUpdateRequest` → `TenantsUpdateResponse` | `PATCH /api/private/v1/tenants/{object.id}` | Applies a field mask; supports optimistic locking with `lock=true`. |
+| `osac.private.v1.Tenants/Delete` | `TenantsDeleteRequest` → `TenantsDeleteResponse` | `DELETE /api/private/v1/tenants/{id}` | Starts Tenant deletion and its asynchronous cleanup. |
+| `osac.private.v1.Tenants/Signal` | `TenantsSignalRequest` → `TenantsSignalResponse` | None; gRPC only | Signals that the Tenant may need reconciliation. |
+
+All six methods are implemented on the private service. The public service
+shares the five CRUD declarations, but its current server implements only
+List/Get; its Create/Update/Delete methods return `UNIMPLEMENTED`.
+
 ### Service comparison summary
 
 | Aspect | AI Grid | OSAC public | OSAC private |
