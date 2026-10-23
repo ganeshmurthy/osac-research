@@ -256,14 +256,18 @@ is absent from the public Clusters API.
 | 6 | `version`: `ClusterVersionReference` | Desired control-plane version. |
 | 7 | `network`: optional `ClusterNetwork` | Network configuration. |
 | 8 | `catalog_item`: `ClusterCatalogItemReference` | Catalog provenance/config. |
-| 9 | `network_attachment`: `ClusterNetworkAttachment` | Tenant network attachment. |
-| 10 | `auto_external_ip_attachment`: optional bool | Auto-create ExternalIP attachments. |
+| 9 | `network_attachment`: `ClusterNetworkAttachment` | Tenant attachment; immutable. |
+| 10 | `auto_external_ip_attachment`: optional bool | Auto-create ExternalIPs; immutable. |
 | 11 | `pull_secret_secret`: `SecretLocalReference` | Pull-secret reference. |
-| 12 | `add_on_operators`: repeated `AddOnOperatorReference` | Requested add-ons; immutable. |
+| 12 | `add_on_operators`: repeated `AddOnOperatorReference` | Immutable; max 32. |
 
 Only AI Grid spec field #1 exists, and it has no equivalent OSAC field. OSAC's
 field #1 is `template`, not `hub_accepts_client`; the two fields are not a match
 just because they share field number 1.
+
+OSAC also validates `node_sets` map keys as DNS labels. `ClusterNodeSet.size` is
+optional and must be positive; `baremetal_instance_type` is immutable and
+`observed_version` is output-only.
 
 ## 6. Status field comparison
 
@@ -310,8 +314,9 @@ output-only; AI Grid does not declare that field option.
 - `ClusterCondition`: `type` #1 (`ClusterConditionType`), `status` #2
   (`ConditionStatus`), `last_transition_time` #3 (`Timestamp`), optional string
   `reason` #4, optional string `message` #5.
-- `ClusterNodeSet`: reserved #1 (`host_type`); optional int32 `size` #2;
-  `baremetal_instance_type` #4 (`BareMetalInstanceTypeReference`), `version` #5
+- `ClusterNodeSet`: reserved #1 (`host_type`); optional int32 `size` #2
+  (must be positive); `baremetal_instance_type` #4
+  (`BareMetalInstanceTypeReference`, immutable), `version` #5
   (`ClusterVersionReference`), output-only string `observed_version` #6.
 - `AddOnOperatorStatus`: string `name` #1, `state` #2
   (`AddOnOperatorInstallState`), string `message` #3.
